@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="status_good">#FF339966</color>
+    <color name="status_minor">#FFF29D50</color>
+    <color name="status_major">#FFCC3300</color>
+
+    <color name="fragment_messages_header">#FF123456</color>
+
+</resources>

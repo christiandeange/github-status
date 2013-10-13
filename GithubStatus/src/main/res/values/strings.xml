@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GitHub Status</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="error_server_unavailable_status">Unavailable</string>
+    <string name="error_server_unavailable_message">Something went horribly wrong.</string>
+
+    <string name="roboto_black">Roboto-Black.ttf</string>
+    <string name="roboto_bold">Roboto-Bold.ttf</string>
+    <string name="roboto_light">Roboto-Light.ttf</string>
+    <string name="roboto_light_italic">Roboto-LightItalic.ttf</string>
+    <string name="roboto_thin">Roboto-Thin.ttf</string>
+    <string name="roboto_thin_italic">Roboto-ThinItalic.ttf</string>
+
+</resources>
