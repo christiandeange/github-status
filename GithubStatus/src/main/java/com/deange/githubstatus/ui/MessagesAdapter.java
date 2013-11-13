@@ -3,6 +3,7 @@ package com.deange.githubstatus.ui;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.http.Status;
+import com.deange.githubstatus.model.Status;
 
 import java.util.List;
 
@@ -25,7 +26,9 @@ public class MessagesAdapter extends ArrayAdapter<Status> {
 
         if (items != null) {
             for (Status status : items) {
-                add(status);
+                if (status != null) {
+                    add(status);
+                }
             }
         }
 
@@ -47,8 +50,12 @@ public class MessagesAdapter extends ArrayAdapter<Status> {
         final Status status = getItem(position);
 
         ((TextView) convertView.findViewById(R.id.list_item_status)).setText(status.getBody());
-        ((TextView) convertView.findViewById(R.id.list_item_timestamp)).setText(
-                status.getCreatedOn().format("%B %d %Y, %r"));
+
+        final Time messageTime = status.getCreatedOn();
+        if (messageTime != null) {
+            ((TextView) convertView.findViewById(R.id.list_item_timestamp)).setText(
+                    messageTime.format("%B %d %Y, %r"));
+        }
 
         ViewUtils.setVisibility(convertView.findViewById(R.id.status_bar_top), position != 0);
         ViewUtils.setVisibility(convertView.findViewById(R.id.status_bar_bottom), position != getCount() - 1);

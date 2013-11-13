@@ -47,7 +47,9 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     protected void deliverResponse(final T response) {
-        mListener.onResponse(response);
+        if (mListener != null) {
+            mListener.onResponse(response);
+        }
     }
 
     @Override

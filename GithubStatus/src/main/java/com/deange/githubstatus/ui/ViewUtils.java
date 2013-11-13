@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.deange.githubstatus.R;
 import com.deange.githubstatus.http.GithubApi;
-import com.deange.githubstatus.http.Status;
+import com.deange.githubstatus.model.Status;
 
 public final class ViewUtils {
 
@@ -18,8 +18,8 @@ public final class ViewUtils {
             return res.getColor(R.color.status_major);
         }
 
-        final String statusString = status.getStatus();
         int colourResId = android.R.color.black;
+        final String statusString = status.getStatus();
 
         if (GithubApi.STATUS_GOOD.equalsIgnoreCase(statusString)) {
             colourResId = R.color.status_good;

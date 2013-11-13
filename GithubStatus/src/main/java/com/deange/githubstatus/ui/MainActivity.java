@@ -1,41 +1,77 @@
 package com.deange.githubstatus.ui;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.Spannable;
-import android.text.SpannableString;
+import android.text.util.Linkify;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.ui.view.TypefaceSpan;
+
+import java.util.Calendar;
 
 public class MainActivity extends FragmentActivity {
+
+    private MainFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupActionBar();
+        getActionBar().setTitle(R.string.app_name);
 
-        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
-        if (fragment == null) {
-            fragment = MainFragment.newInstance();
+        mFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
+        if (mFragment == null) {
+            mFragment = MainFragment.newInstance();
         }
 
-        if (!fragment.isAdded()) {
+        if (!mFragment.isAdded()) {
             getSupportFragmentManager().beginTransaction().add(
-                    R.id.content_frame, fragment, MainFragment.TAG).commit();
+                    R.id.content_frame, mFragment, MainFragment.TAG).commit();
         }
     }
 
-    private void setupActionBar() {
+    private void showInfoDialog() {
 
-        final SpannableString s = new SpannableString(getString(R.string.app_name));
-        s.setSpan(new TypefaceSpan(this, getString(R.string.roboto_light)), 0, s.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        final String developerName = getString(R.string.about_developer_name, Calendar.getInstance().get(Calendar.YEAR));
+        final View dialogContentView = getLayoutInflater().inflate(R.layout.dialog_about, null);
+        ((TextView) dialogContentView.findViewById(R.id.dialog_about_developer_name)).setText(developerName);
+        Linkify.addLinks((TextView) dialogContentView.findViewById(R.id.dialog_about_description), Linkify.WEB_URLS);
 
-        // Update the action bar title with the TypefaceSpan instance
-        getActionBar().setTitle(s);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setView(dialogContentView)
+                .show();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.menu_info:
+                showInfoDialog();
+                return true;
+
+            case R.id.menu_sync:
+                if (mFragment != null) {
+                    mFragment.refresh();
+                    return true;
+                }
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 }

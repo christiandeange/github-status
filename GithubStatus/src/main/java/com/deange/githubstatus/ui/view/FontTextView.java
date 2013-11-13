@@ -33,14 +33,11 @@ public class FontTextView extends TextView {
 
         if (isInEditMode()) {
             // Fix to view the TextFontView in resource previewer
-            setTypeface(Typeface.DEFAULT_BOLD);
             return;
         }
 
         if (!TextUtils.isEmpty(fontName)) {
             setTypeface(Typeface.createFromAsset(getContext().getAssets(), fontName));
-        } else {
-            setTypeface(Typeface.DEFAULT_BOLD);
         }
     }
 }

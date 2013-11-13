@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -15,11 +17,12 @@ import com.android.volley.toolbox.Volley;
 import com.deange.githubstatus.R;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.GsonRequest;
-import com.deange.githubstatus.http.Status;
+import com.deange.githubstatus.model.Status;
 import com.deange.githubstatus.ui.view.AutoScaleTextView;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainFragment extends Fragment {
@@ -29,24 +32,24 @@ public class MainFragment extends Fragment {
     private RequestQueue mQueue;
     private StatusHandler mStatusHandler;
     private MessagesHandler mMessagesHandler;
-    private View mTitleLayout;
-    private View mContentLayout;
-    private View mProgressLayout;
+    private ViewGroup mContentLayout;
+    private ViewGroup mProgressLayout;
+    private TextView mLoadingView;
+    private TextView mNothingView;
 
-    private boolean mLoadedData = false;
     private Status mStatus;
     private List<Status> mMessages;
+
+    private static final Object sTag = new Object();
 
     private MessagesAdapter mAdapter;
     private ListView mListview;
     private AutoScaleTextView mStatusView;
 
     public static MainFragment newInstance() {
-
         MainFragment fragment = new MainFragment();
         fragment.setRetainInstance(true);
         return fragment;
-
     }
 
     @Override
@@ -69,9 +72,10 @@ public class MainFragment extends Fragment {
         mStatusView = (AutoScaleTextView) view.findViewById(R.id.fragment_status_text);
         mListview = (ListView) view.findViewById(R.id.fragment_messages_list_view);
 
-        mContentLayout = view.findViewById(R.id.fragment_main_content);
-        mProgressLayout = view.findViewById(R.id.fragment_progress_layout);
-        mTitleLayout = view.findViewById(R.id.response_label_layout);
+        mContentLayout = (ViewGroup) view.findViewById(R.id.fragment_main_content);
+        mProgressLayout = (ViewGroup) view.findViewById(R.id.fragment_progress_layout);
+        mLoadingView = (TextView) view.findViewById(R.id.loading_messages_view);
+        mNothingView = (TextView) view.findViewById(R.id.no_messages_view);
 
         mListview.setDivider(null);
         mListview.setAdapter(mAdapter);
@@ -85,36 +89,64 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (!mLoadedData) {
+        if (mStatus == null) {
+            setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING));
             queryForStatus();
-            queryForMessages();
-            mLoadedData = true;
 
         } else {
             setStatus(mStatus);
+        }
+
+        if (mMessages == null) {
+            queryForMessages();
+
+        } else {
             setMessages(mMessages);
         }
+
+        updateVisibility();
+
+    }
+
+    public void refresh() {
+        queryForStatus();
+        queryForMessages();
     }
 
     private void queryForStatus() {
-        mQueue.add(new GsonRequest<Status>(
-                GithubApi.STATUS, Status.class, null, mStatusHandler, mStatusHandler));
+        final Request<Status> request = new GsonRequest<Status>(
+                GithubApi.STATUS, Status.class, null, mStatusHandler, mStatusHandler);
+        request.setTag(sTag);
+        request.setShouldCache(false);
+
+        mQueue.add(request);
     }
 
     private void queryForMessages() {
         final Type type = new TypeToken<List<Status>>() {}.getType();
-        mQueue.add(new GsonRequest<List<Status>>(
-                GithubApi.LAST_MESSAGES, type, null, mMessagesHandler, mMessagesHandler));
+        final Request<List<Status>> request = new GsonRequest<List<Status>>(
+                GithubApi.LAST_MESSAGES, type, null, mMessagesHandler, mMessagesHandler);
+
+        request.setTag(sTag);
+        request.setShouldCache(false);
+
+        mQueue.add(request);
     }
 
     private void updateVisibility() {
-        ViewUtils.setVisibility(mContentLayout, mLoadedData);
-        ViewUtils.setVisibility(mProgressLayout, !mLoadedData);
+
+        final boolean someDataLoaded = (mStatus != null) || (mMessages != null);
+
+        ViewUtils.setVisibility(mContentLayout, someDataLoaded);
+        ViewUtils.setVisibility(mProgressLayout, !someDataLoaded);
+
+        ViewUtils.setVisibility(mLoadingView, mMessages == null);
     }
 
     private void setStatus(final Status status) {
         mStatus = status;
-        mStatusView.setVisibility(status.getStatus() == null ? View.GONE : View.VISIBLE);
+        mStatus.calculateVersion();
+
         mStatusView.setTextColor(ViewUtils.resolveStatusColour(getActivity(), status));
         mStatusView.setText(status.getStatus().toUpperCase());
 
@@ -123,23 +155,22 @@ public class MainFragment extends Fragment {
 
     private void setMessages(final List<Status> response) {
         mMessages = response;
-        mTitleLayout.setVisibility(View.VISIBLE);
         mAdapter.refresh(response);
 
         updateVisibility();
+
+        ViewUtils.setVisibility(mNothingView, (mMessages == null || mMessages.isEmpty()));
     }
 
     private class StatusHandler implements Response.ErrorListener, Response.Listener<Status> {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            mTitleLayout.setVisibility(View.GONE);
-            setStatus(Status.getErrorStatus(getActivity()));
+            setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR));
         }
 
         @Override
         public void onResponse(Status response) {
-            mTitleLayout.setVisibility(View.VISIBLE);
             setStatus(response);
         }
     }
@@ -148,9 +179,9 @@ public class MainFragment extends Fragment {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            mTitleLayout.setVisibility(View.GONE);
             Log.v("TAG", error.toString());
             error.printStackTrace();
+            setMessages(new ArrayList<Status>());
         }
 
         @Override
@@ -159,6 +190,4 @@ public class MainFragment extends Fragment {
         }
     }
 
-    private MainFragment() {
-    }
 }
