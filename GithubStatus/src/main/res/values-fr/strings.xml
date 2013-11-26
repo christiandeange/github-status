@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GitHub Etat</string>
+    <string name="app_version">Version %s</string>
+    <string name="action_settings">Paramètres</string>
+
+    <string name="error_server_unavailable_status">Indisponible</string>
+    <string name="error_server_unavailable_message">Quelque chose a mal tourné.</string>
+    <string name="loading_status">Récupération\u2026</string>
+    <string name="loading_previous_messages">Messages Passés</string>
+    <string name="loading_message">Un moment.</string>
+    <string name="no_messages_status">Pas de messages trouvés.</string>
+
+    <string name="status_good">Bon</string>
+    <string name="status_minor">Mineur</string>
+    <string name="status_major">Majeur</string>
+
+    <string name="github_title_text">GitHub est actuellement</string>
+    <string name="info_menu">Infos</string>
+    <string name="info_sync">Recharger</string>
+    <string name="about_app_description">GitHub Etat repose sur l\'API GitHub Etat, http://status.github.com</string>
+
+</resources>

@@ -148,7 +148,7 @@ public class MainFragment extends Fragment {
         mStatus.calculateVersion();
 
         mStatusView.setTextColor(ViewUtils.resolveStatusColour(getActivity(), status));
-        mStatusView.setText(status.getStatus().toUpperCase());
+        mStatusView.setText(status.getTranslatedStatus(getActivity()).toUpperCase());
 
         updateVisibility();
     }

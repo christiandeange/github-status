@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GitHub-Status</string>
+    <string name="app_version">Version %s</string>
+    <string name="action_settings">Einstellungen</string>
+
+    <string name="error_server_unavailable_status">Nicht verfügbar</string>
+    <string name="error_server_unavailable_message">Etwas ging schief.</string>
+    <string name="loading_status">Laden\u2026</string>
+    <string name="loading_previous_messages">Vorherige Nachrichten</string>
+    <string name="loading_message">Bitte haben Sie Geduld.</string>
+    <string name="no_messages_status">Keine Nachrichten gefunden.</string>
+
+    <string name="status_good">Gut</string>
+    <string name="status_minor">Unwichtig</string>
+    <string name="status_major">Bedeutend</string>
+
+    <string name="github_title_text">GitHub ist derzeit</string>
+    <string name="info_menu">Info</string>
+    <string name="info_sync">Aktualisieren</string>
+    <string name="about_app_description">GitHub-Status basiert auf der GitHub-Status API gebaut, http://status.github.com</string>
+
+</resources>

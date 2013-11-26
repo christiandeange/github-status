@@ -1,10 +1,17 @@
 package com.deange.githubstatus;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public final class Utils {
+
+    private Utils() {
+        // Uninstantiable
+    }
 
     public static String hash(final String toHash) {
 
@@ -31,8 +38,30 @@ public final class Utils {
         return hash;
     }
 
-    private Utils() {
-        // Uninstantiable
+    public static String getVersionName(final Context context) {
+
+        String versionName = null;
+
+        try {
+            versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (final PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return versionName;
+    }
+
+    public static int getVersionCode(final Context context) {
+
+        int versionCode = 0;
+
+        try {
+            versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+        } catch (final PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return versionCode;
     }
 
 }

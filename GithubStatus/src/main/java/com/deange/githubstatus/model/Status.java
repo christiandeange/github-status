@@ -6,9 +6,13 @@ import android.text.format.Time;
 
 import com.deange.githubstatus.R;
 import com.deange.githubstatus.Utils;
+import com.deange.githubstatus.http.GithubApi;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @DatabaseTable(tableName = "status")
 public class Status extends BaseModel {
@@ -17,6 +21,13 @@ public class Status extends BaseModel {
     public static final String BODY = "body";
     public static final String CREATED_ON = "created_on";
     public static final String VERSION = "version";
+
+    private static final Map<String, Integer> mStatusMap = new HashMap<String, Integer>();
+    static {
+        mStatusMap.put(GithubApi.STATUS_GOOD, R.string.status_good);
+        mStatusMap.put(GithubApi.STATUS_MINOR, R.string.status_minor);
+        mStatusMap.put(GithubApi.STATUS_MAJOR, R.string.status_major);
+    }
 
     public enum SpecialType {
         ERROR, LOADING
@@ -61,6 +72,25 @@ public class Status extends BaseModel {
 
     public String getStatus() {
         return mStatus;
+    }
+
+    public String getTranslatedStatus(final Context context) {
+
+        String translatedStatus = null;
+
+        if (mStatus != null) {
+            final String key = mStatus.toLowerCase();
+            if (!mStatusMap.containsKey(key)) {
+                // Fallback to default string
+                translatedStatus = mStatus;
+
+            } else {
+                final Integer statusResId = mStatusMap.get(key);
+                translatedStatus = context.getString(statusResId);
+            }
+        }
+
+        return translatedStatus;
     }
 
     public String getBody() {

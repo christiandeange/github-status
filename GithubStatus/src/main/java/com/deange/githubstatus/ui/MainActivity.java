@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.Utils;
 
 import java.util.Calendar;
 
@@ -38,8 +39,11 @@ public class MainActivity extends FragmentActivity {
     private void showInfoDialog() {
 
         final String developerName = getString(R.string.about_developer_name, Calendar.getInstance().get(Calendar.YEAR));
+        final String versionName = getString(R.string.app_version, Utils.getVersionName(this));
+
         final View dialogContentView = getLayoutInflater().inflate(R.layout.dialog_about, null);
         ((TextView) dialogContentView.findViewById(R.id.dialog_about_developer_name)).setText(developerName);
+        ((TextView) dialogContentView.findViewById(R.id.dialog_about_version_name)).setText(versionName);
         Linkify.addLinks((TextView) dialogContentView.findViewById(R.id.dialog_about_description), Linkify.WEB_URLS);
 
         new AlertDialog.Builder(this)
