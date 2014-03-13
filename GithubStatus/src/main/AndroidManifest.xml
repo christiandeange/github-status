@@ -5,10 +5,13 @@
     android:versionName="1.0">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
-    <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="18" />
+    <permission android:name="com.deange.githubstatus.permission.C2D_MESSAGE"
+                android:protectionLevel="signature" />
+    <uses-permission android:name="com.deange.githubstatus.permission.C2D_MESSAGE" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +22,9 @@
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name">
+        </activity>
+
+        <activity android:name=".gcm.DemoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,6 +37,17 @@
             android:authorities="@string/gs_authority_content"
             android:exported="false"
             android:syncable="false" />
+
+        <receiver
+                android:name=".gcm.GcmBroadcastReceiver"
+                android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.deange.githubstatus" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".gcm.GcmIntentService" />
 
     </application>
 
