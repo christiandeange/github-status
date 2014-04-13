@@ -9,7 +9,7 @@ public abstract class BaseModel {
 
     @DatabaseField(columnName = LOCAL_ID, generatedId = true)
     @Expose(serialize = false, deserialize = false)
-    private Long mId;
+    protected Long mId;
 
     public long getId() {
         return mId;
