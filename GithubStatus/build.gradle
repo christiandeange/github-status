@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
 
@@ -15,7 +15,7 @@ repositories {
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "18.1.0"
+    buildToolsVersion "19.0.3"
 
     defaultConfig {
         minSdkVersion 11
@@ -26,6 +26,6 @@ android {
 dependencies {
 	compile 'com.android.support:support-v4:18.0.0'
     compile 'com.j256.ormlite:ormlite-android:4.45'
+    compile 'com.squareup.okhttp:okhttp:1.5.3'
     compile 'com.google.code.gson:gson:2.2.4'
-    compile files('libs/volley.jar')
 }
