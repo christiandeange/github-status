@@ -12,13 +12,16 @@ public final class ViewUtils {
 
     public static int resolveStatusColour(final Context context, final Status status) {
 
-        final Resources res = context.getResources();
-
-        if (status == null || status.getStatus() == null) {
-            return res.getColor(R.color.status_major);
+        if (context == null) {
+            return 0xFF000000;
         }
 
-        int colourResId = android.R.color.black;
+        if (status == null || status.getStatus() == null) {
+            return context.getResources().getColor(R.color.status_major);
+        }
+
+        final int colourResId;
+        final Resources res = context.getResources();
         final String statusString = status.getStatus();
 
         if (GithubApi.STATUS_GOOD.equalsIgnoreCase(statusString)) {
@@ -29,6 +32,9 @@ public final class ViewUtils {
 
         } else if (GithubApi.STATUS_MAJOR.equalsIgnoreCase(statusString)) {
             colourResId = R.color.status_major;
+
+        } else {
+            colourResId = android.R.color.black;
         }
 
         return res.getColor(colourResId);

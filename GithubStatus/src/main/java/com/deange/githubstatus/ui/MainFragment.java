@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.controller.Controller;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.GsonRequest;
 import com.deange.githubstatus.model.Status;
@@ -25,7 +26,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements Controller.Listener {
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
@@ -83,6 +84,22 @@ public class MainFragment extends Fragment {
         updateVisibility();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        Log.v(TAG, "onResume()");
+        super.onResume();
+
+        Controller.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        Log.v(TAG, "onPause()");
+        super.onPause();
+
+        Controller.getInstance().unregister(this);
     }
 
     @Override
@@ -160,6 +177,16 @@ public class MainFragment extends Fragment {
         updateVisibility();
 
         ViewUtils.setVisibility(mNothingView, (mMessages == null || mMessages.isEmpty()));
+    }
+
+    @Override
+    public int getEventFilter() {
+        return Controller.EVENT_RECEIVED_GCM;
+    }
+
+    @Override
+    public void onEvent(final int eventType, final Bundle data) {
+        refresh();
     }
 
     private class StatusHandler implements Response.ErrorListener, Response.Listener<Status> {

@@ -3,9 +3,12 @@ package com.deange.githubstatus;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public final class Utils {
 
@@ -30,9 +33,11 @@ public final class Utils {
 
         } catch (final NoSuchAlgorithmException e) {
             e.printStackTrace();
+            hash = String.valueOf(Arrays.hashCode(e.getStackTrace()));
 
         } catch (final UnsupportedEncodingException e) {
             e.printStackTrace();
+            hash = String.valueOf(Arrays.hashCode(e.getStackTrace()));
         }
 
         return hash;

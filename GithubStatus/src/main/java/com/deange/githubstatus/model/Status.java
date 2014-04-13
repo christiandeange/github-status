@@ -74,6 +74,10 @@ public class Status extends BaseModel {
         return mStatus;
     }
 
+    public Level getLevel() {
+        return Level.from(getStatus());
+    }
+
     public String getTranslatedStatus(final Context context) {
 
         String translatedStatus = null;
@@ -110,6 +114,7 @@ public class Status extends BaseModel {
     }
 
     public String getVersion() {
+        if (mVersion == null) calculateVersion();
         return mVersion;
     }
 

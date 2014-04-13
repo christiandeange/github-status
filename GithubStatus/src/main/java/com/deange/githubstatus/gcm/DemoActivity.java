@@ -33,6 +33,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -107,9 +108,8 @@ public class DemoActivity extends Activity {
                 md.update(signature.toByteArray());
                 Log.e("MY KEY HASH:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
-        } catch (NameNotFoundException e) {
 
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NameNotFoundException | NoSuchAlgorithmException ignored) {
 
         }
     }
@@ -133,7 +133,10 @@ public class DemoActivity extends Activity {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this,
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
-                Log.i(TAG, "This device is not supported.");
+                final String message = "This device is not supported.";
+                Log.i(TAG, message);
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
                 finish();
             }
             return false;
@@ -285,8 +288,7 @@ public class DemoActivity extends Activity {
     private SharedPreferences getGcmPreferences(Context context) {
         // This sample app persists the registration ID in shared preferences, but
         // how you store the regID in your app is up to you.
-        return getSharedPreferences(DemoActivity.class.getSimpleName(),
-                Context.MODE_PRIVATE);
+        return getSharedPreferences(DemoActivity.class.getSimpleName(), Context.MODE_PRIVATE);
     }
     /**
      * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP or CCS to send
@@ -296,7 +298,7 @@ public class DemoActivity extends Activity {
     private void sendRegistrationIdToBackend() {
         // Create a new HttpClient and Post Header
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("http://192.168.56.1:8080/register");
+        HttpPost httppost = new HttpPost("http://githubstatus.appspot.com/register");
 
         try {
             // Add your data
