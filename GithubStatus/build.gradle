@@ -49,6 +49,48 @@ android {
 
     signingConfigs {
     }
+
+    signingConfigs {
+        release {
+            storeFile new File("notYourRealFileName")
+            keyAlias "notYourRealKeystoreAlias"
+            storePassword "notYourRealPassword"
+            keyPassword "notYourRealPassword"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+task askForPasswords << {
+
+    if (System.console() == null) {
+        throw new UnsupportedOperationException("No console available!")
+    }
+
+    def filePath = new File(System.getenv("KEYSTORE_PATH"))
+    def alias = System.getenv("KEYSTORE_ALIAS")
+    def storePw = new String(System.console().readPassword("\nKeystore password: "))
+    def keyPw  = new String(System.console().readPassword("Key password for '" + alias + "': "))
+
+    android.signingConfigs.release.storeFile = filePath
+    android.signingConfigs.release.keyAlias = alias
+    android.signingConfigs.release.storePassword = storePw
+    android.signingConfigs.release.keyPassword = keyPw
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("packageRelease")) {
+        theTask.dependsOn "askForPasswords"
+    }
 }
 
 dependencies {
