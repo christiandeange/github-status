@@ -109,7 +109,9 @@ public class DemoActivity extends Activity {
                 Log.e("MY KEY HASH:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
 
-        } catch (NameNotFoundException | NoSuchAlgorithmException ignored) {
+        } catch (NameNotFoundException ignored) {
+
+        } catch (NoSuchAlgorithmException ignored) {
 
         }
     }

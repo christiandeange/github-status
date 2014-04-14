@@ -27,6 +27,6 @@ dependencies {
     compile "com.google.android.gms:play-services:3.1.+"
     compile 'com.android.support:support-v4:19.0.1'
     compile 'com.j256.ormlite:ormlite-android:4.45'
+    compile 'com.squareup.okhttp:okhttp:1.5.3'
     compile 'com.google.code.gson:gson:2.2.4'
-    compile files('libs/volley.jar')
 }

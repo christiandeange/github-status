@@ -119,7 +119,7 @@ public class Status extends BaseModel {
     }
 
     public void calculateVersion() {
-        final String unhashedVersion = mStatus + mBody + mCreatedOn;
+        final String unhashedVersion = mId + mStatus + mBody + mCreatedOn;
         mVersion = Utils.hash(unhashedVersion);
     }
 
