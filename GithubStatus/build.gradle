@@ -15,16 +15,21 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
-
+    buildToolsVersion '19.0.3'
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 19
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_7
+        targetCompatibility = JavaVersion.VERSION_1_7
+    }
+    signingConfigs {
+    }
 }
 
 dependencies {
-    compile "com.google.android.gms:play-services:3.1.+"
+    compile 'com.google.android.gms:play-services:3.1.+'
     compile 'com.android.support:support-v4:19.0.1'
     compile 'com.j256.ormlite:ormlite-android:4.45'
     compile 'com.squareup.okhttp:okhttp:1.5.3'

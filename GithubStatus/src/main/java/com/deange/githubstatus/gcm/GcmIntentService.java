@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2013 The Android Open Source Project
+ * Copyright 2012 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,91 +13,100 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.deange.githubstatus.gcm;
 
-import com.deange.githubstatus.R;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-
-import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.deange.githubstatus.R;
+
 /**
- * This {@code IntentService} does the actual handling of the GCM message.
- * {@code GcmBroadcastReceiver} (a {@code WakefulBroadcastReceiver}) holds a
- * partial wake lock for this service while the service does its work. When the
- * service is finished, it calls {@code completeWakefulIntent()} to release the
- * wake lock.
+ * IntentService responsible for handling GCM messages.
  */
-public class GcmIntentService extends IntentService {
+public class GCMIntentService extends GCMBaseIntentService {
 
-    public static final String TAG = "GcmIntentService";
-    public static final int NOTIFICATION_ID = 1;
-    private NotificationManager mNotificationManager;
+    @SuppressWarnings("hiding")
+    private static final String TAG = "GCMIntentService";
 
-    public GcmIntentService() {
-        super(TAG);
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    public GCMIntentService() {
+        super(CommonUtilities.SENDER_ID);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        Bundle extras = intent.getExtras();
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+    protected void onRegistered(Context context, String registrationId) {
+        Log.i(TAG, "Device registered: regId = " + registrationId);
+        CommonUtilities.displayMessage(context, getString(R.string.gcm_registered));
+        ServerUtilities.register(context, registrationId);
+    }
 
-        // The getMessageType() intent parameter must be the intent you received in your BroadcastReceiver.
-        String messageType = gcm.getMessageType(intent);
-
-        if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
-            /*
-             * Filter messages based on message type. Since it is likely that GCM will be
-             * extended in the future with new message types, just ignore any message types you're
-             * not interested in, or that you don't recognize.
-             */
-            switch (messageType) {
-                case GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR:
-                    sendNotification("Send error: " + extras.toString());
-                    break;
-
-                case GoogleCloudMessaging.MESSAGE_TYPE_DELETED:
-                    sendNotification("Deleted messages on server: " + extras.toString());
-                    break;
-
-                case GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE:
-                    // Post notification of received message.
-                    sendNotification("Received: " + extras.toString());
-                    break;
-
-            }
+    @Override
+    protected void onUnregistered(Context context, String registrationId) {
+        Log.i(TAG, "Device unregistered");
+        CommonUtilities.displayMessage(context, getString(R.string.gcm_unregistered));
+        if (GCMRegistrar.isRegisteredOnServer(context)) {
+            ServerUtilities.unregister(context, registrationId);
+        } else {
+            // This callback results from the call to unregister made on
+            // ServerUtilities when the registration to the server failed.
+            Log.i(TAG, "Ignoring unregister callback");
         }
-        // Release the wake lock provided by the WakefulBroadcastReceiver.
-        GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    // Put the message into a notification and post it.
-    // This is just one simple example of what you might choose to do with
-    // a GCM message.
-    private void sendNotification(String msg) {
-
-        final PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, DemoActivity.class), 0);
-
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setAutoCancel(true)
-                .setContentTitle("GCM Notification")
-                .setSmallIcon(android.R.drawable.stat_notify_chat)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(msg))
-                .setContentText(msg)
-                .setContentIntent(contentIntent);
-
-        mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+    @Override
+    protected void onMessage(Context context, Intent intent) {
+        Log.i(TAG, "Received message");
+        String message = getString(R.string.gcm_message);
+        CommonUtilities.displayMessage(context, message);
+        // notifies user
+        generateNotification(context, message);
     }
+
+    @Override
+    protected void onDeletedMessages(Context context, int total) {
+        Log.i(TAG, "Received deleted messages notification");
+        String message = getString(R.string.gcm_deleted, total);
+        CommonUtilities.displayMessage(context, message);
+        // notifies user
+        generateNotification(context, message);
+    }
+
+    @Override
+    public void onError(Context context, String errorId) {
+        Log.i(TAG, "Received error: " + errorId);
+        CommonUtilities.displayMessage(context, getString(R.string.gcm_error, errorId));
+    }
+
+    @Override
+    protected boolean onRecoverableError(Context context, String errorId) {
+        // log message
+        Log.i(TAG, "Received recoverable error: " + errorId);
+        CommonUtilities.displayMessage(context, getString(R.string.gcm_recoverable_error, errorId));
+        return super.onRecoverableError(context, errorId);
+    }
+
+    /**
+     * Issues a notification to inform the user that server has sent a message.
+     */
+    private static void generateNotification(Context context, String message) {
+        int icon = R.drawable.ic_launcher;
+        long when = System.currentTimeMillis();
+        NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new Notification(icon, message, when);
+        String title = context.getString(R.string.app_name);
+        Intent notificationIntent = new Intent(context, DemoActivity.class);
+        // set intent so it does not start a new activity
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent intent =
+                PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        notification.setLatestEventInfo(context, title, message, intent);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notificationManager.notify(0, notification);
+    }
+
 }

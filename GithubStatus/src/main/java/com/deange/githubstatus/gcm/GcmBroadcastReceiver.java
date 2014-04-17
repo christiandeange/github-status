@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Google Inc.
+ * Copyright 2012 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,33 +13,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.deange.githubstatus.gcm;
 
 import android.app.Activity;
-import android.content.ComponentName;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.WakefulBroadcastReceiver;
-
+import android.util.Log;
 
 /**
- * This {@code WakefulBroadcastReceiver} takes care of creating and managing a
- * partial wake lock for your app. It passes off the work of processing the GCM
- * message to an {@code IntentService}, while ensuring that the device does not
- * go back to sleep in the transition. The {@code IntentService} calls
- * {@code GcmBroadcastReceiver.completeWakefulIntent()} when it is ready to
- * release the wake lock.
+ * {@link android.content.BroadcastReceiver} that receives GCM messages and delivers them to
+ * an application-specific {@link GCMBaseIntentService} subclass.
+ * <p>
+ * By default, the {@link GCMBaseIntentService} class belongs to the application
+ * main package and is named
+ * {@link GCMConstants#DEFAULT_INTENT_SERVICE_CLASS_NAME}. To use a new class,
+ * the {@link #getGCMIntentServiceClassName(android.content.Context)} must be overridden.
  */
+public class GCMBroadcastReceiver extends BroadcastReceiver {
 
-public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
+    private static final String TAG = "GCMBroadcastReceiver";
+    private static boolean mReceiverSet = false;
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        // Explicitly specify that GcmIntentService will handle the intent.
-        ComponentName comp = new ComponentName(context.getPackageName(),
-                GcmIntentService.class.getName());
-        // Start the service, keeping the device awake while it is launching.
-        startWakefulService(context, (intent.setComponent(comp)));
-        setResultCode(Activity.RESULT_OK);
+    public final void onReceive(Context context, Intent intent) {
+        Log.v(TAG, "onReceive: " + intent.getAction());
+        // do a one-time check if app is using a custom GCMBroadcastReceiver
+        if (!mReceiverSet) {
+            mReceiverSet = true;
+            String myClass = getClass().getName();
+            if (!myClass.equals(GCMBroadcastReceiver.class.getName())) {
+                GCMRegistrar.setRetryReceiverClassName(myClass);
+            }
+        }
+        String className = getGCMIntentServiceClassName(context);
+        Log.v(TAG, "GCM IntentService class: " + className);
+        // Delegates to the application-specific intent service.
+        GCMBaseIntentService.runIntentInService(context, intent, className);
+        setResult(Activity.RESULT_OK, null /* data */, null /* extra */);
+    }
+
+    /**
+     * Gets the class name of the intent service that will handle GCM messages.
+     */
+    protected String getGCMIntentServiceClassName(Context context) {
+        return getDefaultIntentServiceClassName(context);
+    }
+
+    /**
+     * Gets the default class name of the intent service that will handle GCM
+     * messages.
+     */
+    static String getDefaultIntentServiceClassName(Context context) {
+        return GCMConstants.DEFAULT_INTENT_SERVICE_CLASS_NAME;
     }
 }
