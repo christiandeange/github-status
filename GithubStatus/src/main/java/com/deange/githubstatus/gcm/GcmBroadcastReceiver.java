@@ -38,7 +38,8 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public final void onReceive(Context context, Intent intent) {
-        Log.v(TAG, "onReceive: " + intent.getAction());
+        Log.v(TAG, "onReceive(): " + intent.getAction());
+
         // do a one-time check if app is using a custom GCMBroadcastReceiver
         if (!mReceiverSet) {
             mReceiverSet = true;
@@ -47,6 +48,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
                 GCMRegistrar.setRetryReceiverClassName(myClass);
             }
         }
+
         String className = getGCMIntentServiceClassName(context);
         Log.v(TAG, "GCM IntentService class: " + className);
         // Delegates to the application-specific intent service.
@@ -58,14 +60,14 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
      * Gets the class name of the intent service that will handle GCM messages.
      */
     protected String getGCMIntentServiceClassName(Context context) {
-        return getDefaultIntentServiceClassName(context);
+        return getDefaultIntentServiceClassName();
     }
 
     /**
      * Gets the default class name of the intent service that will handle GCM
      * messages.
      */
-    static String getDefaultIntentServiceClassName(Context context) {
+    static String getDefaultIntentServiceClassName() {
         return GCMConstants.DEFAULT_INTENT_SERVICE_CLASS_NAME;
     }
 }

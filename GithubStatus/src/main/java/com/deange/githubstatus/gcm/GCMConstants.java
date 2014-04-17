@@ -16,102 +16,111 @@
 
 package com.deange.githubstatus.gcm;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-
 /**
  * Constants used by the GCM library.
  */
 public final class GCMConstants {
 
+    private static final String C2DM_PACKAGE =
+            "com.google.android.c2dm";
+
     /**
      * Intent sent to GCM to register the application.
      */
     public static final String INTENT_TO_GCM_REGISTRATION =
-            "com.google.android.c2dm.intent.REGISTER";
+            build("REGISTER");
 
     /**
      * Intent sent to GCM to unregister the application.
      */
     public static final String INTENT_TO_GCM_UNREGISTRATION =
-            "com.google.android.c2dm.intent.UNREGISTER";
+            build("UNREGISTER");
 
     /**
      * Intent sent by GCM indicating with the result of a registration request.
      */
     public static final String INTENT_FROM_GCM_REGISTRATION_CALLBACK =
-            "com.google.android.c2dm.intent.REGISTRATION";
+            build("REGISTRATION");
 
     /**
      * Intent used by the GCM library to indicate that the registration call
      * should be retried.
      */
     public static final String INTENT_FROM_GCM_LIBRARY_RETRY =
-            "com.google.android.gcm.intent.RETRY";
+            build("RETRY");
 
     /**
      * Intent sent by GCM containing a message.
      */
     public static final String INTENT_FROM_GCM_MESSAGE =
-            "com.google.android.c2dm.intent.RECEIVE";
+            build("RECEIVE");
 
     /**
      * Extra used on {@link #INTENT_TO_GCM_REGISTRATION} to indicate the sender
      * account (a Google email) that owns the application.
      */
-    public static final String EXTRA_SENDER = "sender";
+    public static final String EXTRA_SENDER =
+            "sender";
 
     /**
      * Extra used on {@link #INTENT_TO_GCM_REGISTRATION} to get the application
      * id.
      */
-    public static final String EXTRA_APPLICATION_PENDING_INTENT = "app";
+    public static final String EXTRA_APPLICATION_PENDING_INTENT =
+            "app";
 
     /**
      * Extra used on {@link #INTENT_FROM_GCM_REGISTRATION_CALLBACK} to indicate
      * that the application has been unregistered.
      */
-    public static final String EXTRA_UNREGISTERED = "unregistered";
+    public static final String EXTRA_UNREGISTERED =
+            "unregistered";
 
     /**
      * Extra used on {@link #INTENT_FROM_GCM_REGISTRATION_CALLBACK} to indicate
      * an error when the registration fails. See constants starting with ERROR_
      * for possible values.
      */
-    public static final String EXTRA_ERROR = "error";
+    public static final String EXTRA_ERROR =
+            "error";
 
     /**
      * Extra used on {@link #INTENT_FROM_GCM_REGISTRATION_CALLBACK} to indicate
      * the registration id when the registration succeeds.
      */
-    public static final String EXTRA_REGISTRATION_ID = "registration_id";
+    public static final String EXTRA_REGISTRATION_ID =
+            "registration_id";
 
     /**
      * Type of message present in the {@link #INTENT_FROM_GCM_MESSAGE} intent.
      * This extra is only set for special messages sent from GCM, not for
      * messages originated from the application.
      */
-    public static final String EXTRA_SPECIAL_MESSAGE = "message_type";
+    public static final String EXTRA_SPECIAL_MESSAGE =
+            "message_type";
 
     /**
      * Special message indicating the server deleted the pending messages.
      */
-    public static final String VALUE_DELETED_MESSAGES = "deleted_messages";
+    public static final String VALUE_DELETED_MESSAGES =
+            "deleted_messages";
 
     /**
      * Number of messages deleted by the server because the device was idle.
      * Present only on messages of special type
      * {@link #VALUE_DELETED_MESSAGES}
      */
-    public static final String EXTRA_TOTAL_DELETED = "total_deleted";
+    public static final String EXTRA_TOTAL_DELETED =
+            "total_deleted";
 
     /**
      * Permission necessary to receive GCM intents.
      */
     public static final String PERMISSION_GCM_INTENTS =
-            "com.google.android.c2dm.permission.SEND";
+            C2DM_PACKAGE + ".permission.SEND";
 
     /**
-     * @see GCMBroadcastReceiver
+     * @see GCMIntentService
      */
     public static final String DEFAULT_INTENT_SERVICE_CLASS_NAME =
             GCMIntentService.class.getName();
@@ -144,6 +153,7 @@ public final class GCMConstants {
      */
     public static final String ERROR_INVALID_PARAMETERS =
             "INVALID_PARAMETERS";
+
     /**
      * The sender account is not recognized. Fix on the device side.
      */
@@ -156,6 +166,13 @@ public final class GCMConstants {
      */
     public static final String ERROR_PHONE_REGISTRATION_ERROR =
             "PHONE_REGISTRATION_ERROR";
+
+    /**
+     * Builds up a valud intent property string
+     */
+    private static String build(final String name) {
+        return C2DM_PACKAGE + "." + "intent" + "." + name;
+    }
 
     private GCMConstants() {
         throw new UnsupportedOperationException();

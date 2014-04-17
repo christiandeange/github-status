@@ -42,8 +42,8 @@ public class DemoActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkNotNull(CommonUtilities.SERVER_URL, "SERVER_URL");
-        checkNotNull(CommonUtilities.SENDER_ID, "SENDER_ID");
+        checkNotNull(GCMUtils.SERVER_URL, "SERVER_URL");
+        checkNotNull(GCMUtils.SENDER_ID, "SENDER_ID");
         // Make sure the device has the proper dependencies.
         GCMRegistrar.checkDevice(this);
         // Make sure the manifest was properly set - comment out this line
@@ -52,11 +52,11 @@ public class DemoActivity extends Activity {
         setContentView(R.layout.activity_gcm);
         mDisplay = (TextView) findViewById(R.id.display);
         registerReceiver(mHandleMessageReceiver,
-                new IntentFilter(CommonUtilities.DISPLAY_MESSAGE_ACTION));
+                new IntentFilter(GCMUtils.ACTION_DISPLAY_MESSAGE));
         final String regId = GCMRegistrar.getRegistrationId(this);
         if (regId.isEmpty()) {
             // Automatically registers application on startup.
-            GCMRegistrar.register(this, CommonUtilities.SENDER_ID);
+            GCMRegistrar.register(this, GCMUtils.SENDER_ID);
         } else {
             // Device is already registered on GCM, check server.
             if (GCMRegistrar.isRegisteredOnServer(this)) {
@@ -72,7 +72,7 @@ public class DemoActivity extends Activity {
                     @Override
                     protected Void doInBackground(Void... params) {
                         boolean registered =
-                                ServerUtilities.register(context, regId);
+                                GCMServerUtilities.register(context, regId);
                         // At this point all attempts to register with the app
                         // server failed, so we need to unregister the device
                         // from GCM - the app will try to register again when
@@ -113,7 +113,7 @@ public class DemoActivity extends Activity {
              * uncomment the equivalent options on options_menu.xml).
              */
             case R.id.options_register:
-                GCMRegistrar.register(this, CommonUtilities.SENDER_ID);
+                GCMRegistrar.register(this, GCMUtils.SENDER_ID);
                 return true;
             case R.id.options_unregister:
                 GCMRegistrar.unregister(this);
@@ -153,7 +153,7 @@ public class DemoActivity extends Activity {
             new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            appendNewMessage(intent.getExtras().getString(CommonUtilities.EXTRA_MESSAGE));
+            appendNewMessage(intent.getExtras().getString(GCMUtils.EXTRA_MESSAGE));
         }
     };
 
