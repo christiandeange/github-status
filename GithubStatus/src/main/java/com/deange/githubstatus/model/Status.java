@@ -78,20 +78,30 @@ public class Status extends BaseModel {
         return Level.from(getStatus());
     }
 
-    public String getTranslatedStatus(final Context context) {
+    public static String getTranslatedStatus(final Context context, final Status status) {
 
         String translatedStatus = null;
 
-        if (mStatus != null) {
-            final String key = mStatus.toLowerCase();
+        if (status != null && status.getStatus() != null) {
+            final String key = status.getStatus().toLowerCase();
             if (!mStatusMap.containsKey(key)) {
                 // Fallback to default string
-                translatedStatus = mStatus;
+                translatedStatus = key;
 
             } else {
                 final Integer statusResId = mStatusMap.get(key);
                 translatedStatus = context.getString(statusResId);
             }
+
+        } else {
+
+            if (context != null) {
+
+
+            } else {
+                translatedStatus = "Unavailable";
+            }
+
         }
 
         return translatedStatus;
@@ -118,7 +128,7 @@ public class Status extends BaseModel {
         return mVersion;
     }
 
-    public void calculateVersion() {
+    private void calculateVersion() {
         final String unhashedVersion = mId + mStatus + mBody + mCreatedOn;
         mVersion = Utils.hash(unhashedVersion);
     }

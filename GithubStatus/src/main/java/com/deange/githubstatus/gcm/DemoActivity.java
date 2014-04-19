@@ -15,15 +15,12 @@
  */
 package com.deange.githubstatus.gcm;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -44,6 +41,8 @@ public class DemoActivity extends GCMBaseActivity {
 
         setContentView(R.layout.activity_gcm);
         mDisplay = (TextView) findViewById(R.id.display);
+
+        // Listen for display messages only
         registerReceiver(mMessageReceiver,
                 new IntentFilter(GCMUtils.ACTION_DISPLAY_MESSAGE));
 
@@ -95,7 +94,7 @@ public class DemoActivity extends GCMBaseActivity {
     }
 
     private void appendNewMessage(final String message) {
-        mDisplay.append(new Date() + ": " + message + "\n");
+        mDisplay.append(new Date() + " > " + message + "\n");
     }
 
     @Override
@@ -104,7 +103,7 @@ public class DemoActivity extends GCMBaseActivity {
         final StringBuilder sb = new StringBuilder("[");
         for (final String key : intent.getExtras().keySet()) {
             sb.append(key);
-            sb.append("=");
+            sb.append(" = ");
             sb.append(intent.getExtras().get(key));
             sb.append(", ");
         }

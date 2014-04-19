@@ -22,15 +22,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.deange.githubstatus.R;
 
-public abstract class GCMBaseActivity extends Activity {
+public abstract class GCMBaseActivity
+        extends FragmentActivity
+        implements OnGCMMessageReceivedListener {
 
     private static final String TAG = GCMBaseActivity.class.getSimpleName();
 
-    AsyncTask<Void, Void, Void> mRegisterTask;
+    private AsyncTask<Void, Void, Void> mRegisterTask;
+    private final GCMMessageReceiver mHandleGcmMessageReceiver = new GCMMessageReceiver(this);
+    private boolean mNeedToCheckPlayServices = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,7 @@ public abstract class GCMBaseActivity extends Activity {
         if (regId.isEmpty()) {
             // Automatically registers application on startup.
             GCMRegistrar.register(this, GCMUtils.SENDER_ID);
+
         } else {
             // Device is already registered on GCM, check server.
             if (GCMRegistrar.isRegisteredOnServer(this)) {
@@ -108,15 +114,5 @@ public abstract class GCMBaseActivity extends Activity {
             throw new NullPointerException(getString(R.string.error_config, name));
         }
     }
-
-    private final BroadcastReceiver mHandleGcmMessageReceiver =
-            new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            onGcmMessageReceived(intent);
-        }
-    };
-
-    public abstract void onGcmMessageReceived(final Intent intent);
 
 }

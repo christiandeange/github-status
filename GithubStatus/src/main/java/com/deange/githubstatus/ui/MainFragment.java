@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.controller.StateController;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;
 import com.deange.githubstatus.model.Status;
@@ -157,10 +158,11 @@ public class MainFragment
 
     private void setStatus(final Status status) {
         mStatus = status;
-        mStatus.calculateVersion();
 
         mStatusView.setTextColor(ViewUtils.resolveStatusColour(getActivity(), status));
-        mStatusView.setText(status.getTranslatedStatus(getActivity()).toUpperCase());
+        mStatusView.setText(Status.getTranslatedStatus(getActivity(), status).toUpperCase());
+
+        StateController.getInstance().setStatus(status);
 
         updateVisibility();
     }

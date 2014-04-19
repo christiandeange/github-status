@@ -55,11 +55,11 @@ public final class GCMUtils {
         context.sendBroadcast(intent);
     }
 
-    public static void listenForGcmMessages(final Context context, final BroadcastReceiver receiver) {
-        context.registerReceiver(receiver, new IntentFilter(GCMUtils.ACTION_GCM_MESSAGE_RECEIVED));
+    public static void listenForGcmMessages(final Context context, final GCMMessageReceiver receiver) {
+        context.registerReceiver(receiver, new IntentFilter(receiver.getAction()));
     }
 
-    public static void unregisterForGcmMessages(final Context context, final BroadcastReceiver receiver) {
+    public static void unregisterForGcmMessages(final Context context, final GCMMessageReceiver receiver) {
         context.unregisterReceiver(receiver);
     }
 }
