@@ -24,7 +24,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.controller.Controller;
 
 /**
  * IntentService responsible for handling GCM messages.

@@ -10,7 +10,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.controller.Controller;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;
 import com.deange.githubstatus.model.Status;
@@ -19,7 +18,8 @@ import com.deange.githubstatus.ui.view.AutoScaleTextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends Fragment implements Controller.Listener {
+public class MainFragment
+        extends Fragment {
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
@@ -71,16 +71,12 @@ public class MainFragment extends Fragment implements Controller.Listener {
     public void onResume() {
         Log.v(TAG, "onResume()");
         super.onResume();
-
-        Controller.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         Log.v(TAG, "onPause()");
         super.onPause();
-
-        Controller.getInstance().unregister(this);
     }
 
     @Override
@@ -176,16 +172,6 @@ public class MainFragment extends Fragment implements Controller.Listener {
         updateVisibility();
 
         ViewUtils.setVisibility(mNothingView, (mMessages == null || mMessages.isEmpty()));
-    }
-
-    @Override
-    public int getEventFilter() {
-        return Controller.EVENT_RECEIVED_GCM;
-    }
-
-    @Override
-    public void onEvent(final int eventType, final Bundle data) {
-        refresh();
     }
 
 }
