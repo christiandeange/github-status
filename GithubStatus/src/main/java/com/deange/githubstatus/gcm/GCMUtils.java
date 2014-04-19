@@ -22,7 +22,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 
 import com.deange.githubstatus.BuildConfig;
-import com.deange.githubstatus.MainApplication;
+import com.deange.githubstatus.Utils;
 
 /**
  * Helper class providing methods and constants common to other classes in the
@@ -32,26 +32,16 @@ public final class GCMUtils {
 
     public static final String TAG = GCMUtils.class.getSimpleName();
 
-    public static final String SENDER_ID = "196611706338";
-    public static final String SERVER_URL;
-    static {
-        if (BuildConfig.DEBUG) {
-            SERVER_URL = "http://10.0.0.122:8080";
-
-        } else {
-            SERVER_URL = "http://githubstatus.appspot.com";
-        }
-    }
-
-
-    public static final String EXTRA_MESSAGE = "message";
-    public static final String EXTRA_BUNDLE = "bundle";
+    public static final String SENDER_ID = BuildConfig.SENDER_ID;
+    public static final String SERVER_URL = BuildConfig.SERVER_URL;
+    public static final String EXTRA_MESSAGE = Utils.buildAction("message");
+    public static final String EXTRA_BUNDLE = Utils.buildAction("bundle");
 
     public static final String ACTION_DISPLAY_MESSAGE =
-            MainApplication.buildAction("DISPLAY_MESSAGE");
+            Utils.buildAction("DISPLAY_MESSAGE");
 
-    public static final String ACTION_GCM_MESSAGE_RECEIVED =
-            MainApplication.buildAction("GCM_MESSAGE_RECEIVED");
+    static final String ACTION_GCM_MESSAGE_RECEIVED =
+            Utils.buildAction("GCM_MESSAGE_RECEIVED");
 
     public static void displayMessage(final Context context, final String message) {
         Intent intent = new Intent(ACTION_DISPLAY_MESSAGE);

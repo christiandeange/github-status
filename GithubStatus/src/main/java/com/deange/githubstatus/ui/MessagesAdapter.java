@@ -40,6 +40,7 @@ public class MessagesAdapter extends ArrayAdapter<Status> {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

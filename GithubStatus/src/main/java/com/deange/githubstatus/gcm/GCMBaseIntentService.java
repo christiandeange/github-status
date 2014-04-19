@@ -25,10 +25,11 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.deange.githubstatus.MainApplication;
+import com.deange.githubstatus.Utils;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Skeleton for application-specific {@link android.app.IntentService}s responsible for
@@ -45,8 +46,7 @@ public abstract class GCMBaseIntentService extends IntentService {
 
     public static final String TAG = GCMBaseIntentService.class.getSimpleName();
 
-    private static final String WAKELOCK_KEY = MainApplication.buildAction("GCM_LIB");
-    private static PowerManager.WakeLock sWakeLock;
+    private static final String WAKELOCK_KEY = Utils.buildAction("GCM_LIB");
     private static final Object sLock = GCMBaseIntentService.class;
 
     private final String[] mSenderIds;
