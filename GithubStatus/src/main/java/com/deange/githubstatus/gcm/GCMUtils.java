@@ -56,10 +56,10 @@ public final class GCMUtils {
     }
 
     public static void listenForGcmMessages(final Context context, final BroadcastReceiver receiver) {
-        context.registerReceiver(receiver, new IntentFilter(GCMUtils.ACTION_DISPLAY_MESSAGE));
+        context.registerReceiver(receiver, new IntentFilter(GCMUtils.ACTION_GCM_MESSAGE_RECEIVED));
     }
 
-    public void unregisterForGcmMessages(final Context context, final BroadcastReceiver receiver) {
+    public static void unregisterForGcmMessages(final Context context, final BroadcastReceiver receiver) {
         context.unregisterReceiver(receiver);
     }
 }

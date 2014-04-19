@@ -48,12 +48,11 @@ public abstract class GCMBaseIntentService extends IntentService {
 
     private static final String WAKELOCK_KEY = Utils.buildAction("GCM_LIB");
     private static final Object sLock = GCMBaseIntentService.class;
+    private static PowerManager.WakeLock sWakeLock;
 
     private final String[] mSenderIds;
 
-    // Instance counter
-    private static int sCounter = 0;
-
+    private static final AtomicInteger sCounter = new AtomicInteger();
     private static final int MAX_BACKOFF_MS = (int) TimeUnit.SECONDS.toMillis(3600); // 1 hour
 
     // token used to check intent origin
@@ -87,7 +86,7 @@ public abstract class GCMBaseIntentService extends IntentService {
     }
 
     private static String getName(String senderId) {
-        String name = "GCMIntentService-" + senderId + "-" + (++sCounter);
+        String name = "GCMIntentService-" + senderId + "-" + (sCounter.getAndIncrement());
         Log.v(TAG, "Intent service name: " + name);
         return name;
     }

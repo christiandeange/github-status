@@ -71,7 +71,7 @@ public class GCMIntentService extends GCMBaseIntentService {
         GCMUtils.displayMessage(context, message);
         generateNotification(context, message);
 
-        Controller.getInstance().onGcmNotificationReceived(intent.getExtras());
+        GCMUtils.onGcmMessageReceived(context, intent.getExtras());
     }
 
     @Override

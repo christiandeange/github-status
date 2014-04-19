@@ -30,12 +30,12 @@ public class GithubApi {
 
     // HTTP METHODS
 
-    public static void getStatus(final Context context, final String url, final HttpTask.Listener<Status> listener) {
-        doApiGet(new GithubStatusApi(context), Status.class, url, listener);
+    public static void getStatus(final Context context, final HttpTask.Listener<Status> listener) {
+        doApiGet(new GithubStatusApi(context), Status.class, GithubApi.LAST_MESSAGE, listener);
     }
 
-    public static void getMessages(final Context context, final String url, final HttpTask.Listener<List<Status>> listener) {
-        doApiGet(new GithubStatusMessagesApi(context), new TypeToken<List<Status>>(){}.getType(), url, listener);
+    public static void getMessages(final Context context, final HttpTask.Listener<List<Status>> listener) {
+        doApiGet(new GithubStatusMessagesApi(context), new TypeToken<List<Status>>(){}.getType(), GithubApi.LAST_MESSAGES, listener);
     }
 
     private static <T> void doApiGet(final BaseApi<T> api, final Type clazz, final String url, final HttpTask.Listener<T> listener) {

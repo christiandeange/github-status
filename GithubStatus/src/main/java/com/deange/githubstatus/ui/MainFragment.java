@@ -115,7 +115,7 @@ public class MainFragment extends Fragment implements Controller.Listener {
 
     private void queryForStatus() {
 
-        GithubApi.getStatus(getActivity(), GithubApi.LAST_MESSAGE, new HttpTask.Listener<Status>() {
+        GithubApi.getStatus(getActivity(), new HttpTask.Listener<Status>() {
             @Override
             public void onGet(final Status entity, final Exception exception) {
 
@@ -133,7 +133,7 @@ public class MainFragment extends Fragment implements Controller.Listener {
 
     private void queryForMessages() {
 
-        GithubApi.getMessages(getActivity(), GithubApi.LAST_MESSAGES, new HttpTask.Listener<List<Status>>() {
+        GithubApi.getMessages(getActivity(), new HttpTask.Listener<List<Status>>() {
             @Override
             public void onGet(final List<Status> entity, final Exception exception) {
 
