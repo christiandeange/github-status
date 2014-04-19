@@ -26,7 +26,7 @@ android {
         debug {
             def proc = (project.projectDir.absolutePath + "/dev.sh").execute()
             proc.waitFor()
-            def localhostIpAddr = proc.in.text.split("\n")[0] + ":8080"
+            def localhostIpAddr = "http://" + proc.in.text.split("\n")[0] + ":8080"
 
             buildConfigField "String", "SERVER_URL", "\"${localhostIpAddr}\""
         }
