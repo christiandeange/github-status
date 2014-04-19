@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.controller.NotificationController;
 import com.deange.githubstatus.controller.StateController;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;

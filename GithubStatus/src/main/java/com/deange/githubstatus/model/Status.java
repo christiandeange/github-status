@@ -22,8 +22,9 @@ public class Status extends BaseModel {
     public static final String CREATED_ON = "created_on";
     public static final String VERSION = "version";
 
-    private static final Map<String, Integer> mStatusMap = new HashMap<String, Integer>();
+    private static final Map<String, Integer> mStatusMap = new HashMap<>();
     static {
+        mStatusMap.put(GithubApi.STATUS_UNAVAILABLE, R.string.error_server_unavailable_status);
         mStatusMap.put(GithubApi.STATUS_GOOD, R.string.status_good);
         mStatusMap.put(GithubApi.STATUS_MINOR, R.string.status_minor);
         mStatusMap.put(GithubApi.STATUS_MAJOR, R.string.status_major);
@@ -45,6 +46,8 @@ public class Status extends BaseModel {
     @DatabaseField(columnName = VERSION)
     private String mVersion;
 
+    private boolean mSpecial = false;
+
     public static Status getSpecialStatus(final Context context, final SpecialType type) {
 
         final Time now = new Time();
@@ -52,6 +55,7 @@ public class Status extends BaseModel {
 
         final Status specialStatus = new Status();
         specialStatus.mCreatedOn = now.format3339(false);
+        specialStatus.mSpecial = true;
 
         switch (type) {
 
@@ -70,8 +74,16 @@ public class Status extends BaseModel {
         return specialStatus;
     }
 
+    public boolean isSpecialStatus() {
+        return mSpecial;
+    }
+
     public String getStatus() {
-        return mStatus;
+        return mStatus == null ? "" : mStatus;
+    }
+
+    public String getBody() {
+        return mBody == null ? "" : mBody;
     }
 
     public Level getLevel() {
@@ -80,7 +92,7 @@ public class Status extends BaseModel {
 
     public static String getTranslatedStatus(final Context context, final Status status) {
 
-        String translatedStatus = null;
+        final String translatedStatus;
 
         if (status != null && status.getStatus() != null) {
             final String key = status.getStatus().toLowerCase();
@@ -96,7 +108,7 @@ public class Status extends BaseModel {
         } else {
 
             if (context != null) {
-
+                translatedStatus = context.getString(R.string.error_server_unavailable_status);
 
             } else {
                 translatedStatus = "Unavailable";
@@ -105,10 +117,6 @@ public class Status extends BaseModel {
         }
 
         return translatedStatus;
-    }
-
-    public String getBody() {
-        return mBody;
     }
 
     public Time getCreatedOn() {
