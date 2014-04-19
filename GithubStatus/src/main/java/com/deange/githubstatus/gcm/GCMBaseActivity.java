@@ -15,17 +15,17 @@
  */
 package com.deange.githubstatus.gcm;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.deange.githubstatus.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public abstract class GCMBaseActivity
         extends FragmentActivity
@@ -95,6 +95,49 @@ public abstract class GCMBaseActivity
                 };
                 mRegisterTask.execute();
             }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mNeedToCheckPlayServices) {
+            checkPlayServices();
+        }
+    }
+
+    private boolean checkPlayServices() {
+
+        mNeedToCheckPlayServices = false;
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+        if (resultCode == ConnectionResult.SUCCESS) {
+            return true;
+
+        } else {
+            Log.d(TAG, "isGooglePlayServicesAvailable = " + resultCode);
+
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                final Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
+                dialog.setCancelable(false);
+
+                // The dialog is dismissed when the user taps Update and launches the Play Store.
+                // We need to look again to see if they actually installed Play Services.
+
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        mNeedToCheckPlayServices = true;
+                    }
+                });
+                dialog.show();
+
+            } else {
+                Log.e(TAG, "Unrecoverable error checking Google Play Services.");
+                finish();
+            }
+
+            return false;
         }
     }
 
