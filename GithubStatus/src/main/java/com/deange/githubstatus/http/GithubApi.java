@@ -23,13 +23,13 @@ public class GithubApi {
     public static final String LAST_MESSAGES = "/messages" + JSON;
 
 
-    // STATUS CODES
+    // STATUS CODES (must be lowercase!)
+    public static final String STATUS_UNAVAILABLE = "unavailable";
     public static final String STATUS_GOOD = "good";
     public static final String STATUS_MINOR = "minor";
     public static final String STATUS_MAJOR = "major";
 
     // HTTP METHODS
-
     public static void getStatus(final Context context, final HttpTask.Listener<Status> listener) {
         doApiGet(new GithubStatusApi(context), Status.class, GithubApi.LAST_MESSAGE, listener);
     }
