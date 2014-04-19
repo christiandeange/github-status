@@ -454,7 +454,7 @@ public final class GCMRegistrar {
             return packageInfo.versionCode;
         } catch (NameNotFoundException e) {
             // should never happen
-            throw new RuntimeException("Coult not get package name: " + e);
+            throw new RuntimeException("Could not get package name: " + e);
         }
     }
 

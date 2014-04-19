@@ -74,17 +74,12 @@ public final class Utils {
         return versionName;
     }
 
-    public static int getVersionCode(final Context context) {
-
-        int versionCode = 0;
-
-        try {
-            versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
-        } catch (final PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return versionCode;
+    public static int getVersionCode() {
+        return BuildConfig.VERSION_CODE;
     }
 
+
+    public static String buildAction(final String action) {
+        return BuildConfig.PACKAGE_NAME + "." + action;
+    }
 }

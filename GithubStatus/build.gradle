@@ -16,14 +16,37 @@ repositories {
 android {
     compileSdkVersion 19
     buildToolsVersion '19.0.3'
+
+    buildTypes {
+
+        all {
+            buildConfigField "String", "SENDER_ID", "\"196611706338\""
+        }
+
+        debug {
+            def proc = (project.projectDir.absolutePath + "/dev.sh").execute()
+            proc.waitFor()
+            def localhostIpAddr = proc.in.text.split("\n")[0] + ":8080"
+
+            buildConfigField "String", "SERVER_URL", "\"${localhostIpAddr}\""
+        }
+
+        release {
+            buildConfigField "String", "SERVER_URL", "\"http://githubstatus.appspot.com\""
+        }
+
+    }
+
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 19
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_7
         targetCompatibility = JavaVersion.VERSION_1_7
     }
+
     signingConfigs {
     }
 }
