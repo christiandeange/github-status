@@ -37,6 +37,10 @@ android {
 
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 19
