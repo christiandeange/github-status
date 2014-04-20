@@ -42,7 +42,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * Subclasses must provide a public no-arg constructor.
  */
-public abstract class GCMBaseIntentService extends IntentService {
+public abstract class GCMBaseIntentService
+        extends IntentService {
 
     public static final String TAG = GCMBaseIntentService.class.getSimpleName();
 

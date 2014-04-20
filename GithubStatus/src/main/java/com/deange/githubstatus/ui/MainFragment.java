@@ -165,8 +165,6 @@ public class MainFragment
 
         StateController.getInstance().setStatus(status);
 
-        NotificationController.getInstance().notificationForStatus(status);
-
         updateVisibility();
     }
 

@@ -141,6 +141,16 @@ public class Status extends BaseModel {
         mVersion = Utils.hash(unhashedVersion);
     }
 
+    public static boolean shouldAlert(final Status oldStatus, final Status newStatus) {
+
+        if (oldStatus == null || newStatus == null) {
+            return true;
+        }
+
+        // Alert on any message in MINOR/MAJOR status
+        return newStatus.getLevel().isHigherThan(Level.GOOD) || oldStatus.getLevel() != newStatus.getLevel();
+    }
+
     private Status() {
         // Uninstantiable
     }

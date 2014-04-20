@@ -1,6 +1,7 @@
 package com.deange.githubstatus.ui;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.util.Linkify;
@@ -11,10 +12,12 @@ import android.widget.TextView;
 
 import com.deange.githubstatus.R;
 import com.deange.githubstatus.Utils;
+import com.deange.githubstatus.gcm.GCMBaseActivity;
 
 import java.util.Calendar;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity
+        extends GCMBaseActivity {
 
     private MainFragment mFragment;
 
@@ -22,8 +25,6 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        getActionBar().setTitle(R.string.app_name);
 
         mFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
         if (mFragment == null) {
@@ -68,14 +69,24 @@ public class MainActivity extends FragmentActivity {
                 return true;
 
             case R.id.menu_sync:
-                if (mFragment != null) {
-                    mFragment.refresh();
-                    return true;
-                }
+                refresh();
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void refresh() {
+        if (mFragment != null) {
+            mFragment.refresh();
+        }
+    }
+
+    @Override
+    public void onGcmMessageReceived(final Intent intent) {
+        // Reload the fragment's content view
+        refresh();
     }
 }

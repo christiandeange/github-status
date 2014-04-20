@@ -24,11 +24,19 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.controller.NotificationController;
+import com.deange.githubstatus.controller.StateController;
+import com.deange.githubstatus.http.GithubApi;
+import com.deange.githubstatus.model.Status;
+
+import java.io.IOException;
 
 /**
  * IntentService responsible for handling GCM messages.
  */
-public class GCMIntentService extends GCMBaseIntentService {
+public class GCMIntentService
+        extends GCMBaseIntentService
+        implements OnGCMMessageReceivedListener {
 
     private static final String TAG = GCMIntentService.class.getSimpleName();
 
@@ -68,18 +76,20 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         String message = getString(R.string.gcm_message);
         GCMUtils.displayMessage(context, message);
-        generateNotification(context, message);
 
+        // Notify other classes
         GCMUtils.onGcmMessageReceived(context, intent.getExtras());
+
+        // Notify ourselves
+        onGcmMessageReceived(intent);
     }
 
     @Override
     protected void onDeletedMessages(Context context, int total) {
         Log.i(TAG, "Received deleted messages notification");
 
-        String message = getString(R.string.gcm_deleted, total);
-        GCMUtils.displayMessage(context, message);
-        generateNotification(context, message);
+        GCMUtils.displayMessage(context, getString(R.string.gcm_deleted, total));
+        super.onDeletedMessages(context, total);
     }
 
     @Override
@@ -97,31 +107,26 @@ public class GCMIntentService extends GCMBaseIntentService {
         return super.onRecoverableError(context, errorId);
     }
 
-    /**
-     * Issues a notification to inform the user that server has sent a message.
-     */
-    private static void generateNotification(Context context, String message) {
+    @Override
+    public void onGcmMessageReceived(final Intent intent) {
 
-        String title = context.getString(R.string.app_name);
-        int icon = R.drawable.ic_launcher;
-        long when = System.currentTimeMillis();
+        final Status newStatus;
+        try {
+            newStatus = GithubApi.getStatus(getApplicationContext());
 
-        Intent notificationIntent = new Intent(context, DemoActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent intent = PendingIntent.getActivity(context, NOTIFICATION_ID, notificationIntent, 0);
+        } catch (IOException e) {
+            // Cannot retrieve new status information
+            return;
+        }
 
-        final Notification notification = new NotificationCompat.Builder(context)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setSmallIcon(icon)
-                .setTicker(message)
-                .setWhen(when)
-                .setContentIntent(intent)
-                .setAutoCancel(true)
-                .build();
+        final Status oldStatus = StateController.getInstance().getStatus();
 
-        ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(NOTIFICATION_ID, notification);
+        if (Status.shouldAlert(oldStatus, newStatus)) {
+            // Pop a notification that the status has now changed!
+            NotificationController.getInstance().notificationForStatus(newStatus);
+        }
+
+        // Save the new status
+        StateController.getInstance().setStatus(newStatus);
     }
-
 }

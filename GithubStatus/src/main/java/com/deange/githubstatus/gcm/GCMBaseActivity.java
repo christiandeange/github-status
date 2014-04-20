@@ -38,7 +38,7 @@ public abstract class GCMBaseActivity
     private boolean mNeedToCheckPlayServices = true;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         checkNotNull(GCMUtils.SERVER_URL, "SERVER_URL");

@@ -34,17 +34,26 @@ public class GithubApi {
         doApiGet(new GithubStatusApi(context), Status.class, GithubApi.LAST_MESSAGE, listener);
     }
 
+    public static Status getStatus(final Context context) throws IOException {
+        return doApiGet(new GithubStatusApi(context), Status.class, GithubApi.LAST_MESSAGE);
+    }
+
     public static void getMessages(final Context context, final HttpTask.Listener<List<Status>> listener) {
         doApiGet(new GithubStatusMessagesApi(context), new TypeToken<List<Status>>(){}.getType(), GithubApi.LAST_MESSAGES, listener);
     }
 
+    public static List<Status> getMessages(final Context context) throws IOException {
+        return doApiGet(new GithubStatusMessagesApi(context), new TypeToken<List<Status>>(){}.getType(), GithubApi.LAST_MESSAGES);
+    }
+
     private static <T> void doApiGet(final BaseApi<T> api, final Type clazz, final String url, final HttpTask.Listener<T> listener) {
-        new AsyncTask<Void, Void, T>() {
+
+        final AsyncTask<Void, Void, T> getTask = new AsyncTask<Void, Void, T>() {
 
             Exception ex = null;
 
             @Override
-            protected T doInBackground(final Void... params) {
+            public T doInBackground(final Void... params) {
                 try {
                     return api.get(clazz, url);
                 } catch (IOException e) {
@@ -55,12 +64,16 @@ public class GithubApi {
             }
 
             @Override
-            protected void onPostExecute(final T entity) {
+            public void onPostExecute(final T entity) {
                 if (listener != null) {
                     listener.onGet(entity, ex);
                 }
             }
-        }.execute();
+        };
+    }
+
+    private static <T> T doApiGet(final BaseApi<T> api, final Type clazz, final String url) throws IOException {
+        return api.get(clazz, url);
     }
 
     private GithubApi() {
