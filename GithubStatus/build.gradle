@@ -18,8 +18,8 @@ android {
     buildToolsVersion "19.0.3"
 
     defaultConfig {
-        minSdkVersion 11
-        targetSdkVersion 18
+        minSdkVersion 14
+        targetSdkVersion 19
     }
 
     signingConfigs {
