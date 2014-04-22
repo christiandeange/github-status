@@ -54,6 +54,8 @@ public final class GCMServerUtilities {
         Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
 
+        Log.v(TAG, "Registering at '" + serverUrl + "'");
+
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
 
         // Once GCM returns a registration id, we need to register it in the

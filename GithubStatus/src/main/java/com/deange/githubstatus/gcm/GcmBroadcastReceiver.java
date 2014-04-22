@@ -40,14 +40,8 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
     public final void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive(): " + intent.getAction());
 
-        // do a one-time check if app is using a custom GCMBroadcastReceiver
-        if (!mReceiverSet) {
-            mReceiverSet = true;
-            String myClass = getClass().getName();
-            if (!myClass.equals(GCMBroadcastReceiver.class.getName())) {
-                GCMRegistrar.setRetryReceiverClassName(myClass);
-            }
-        }
+        // check if app is using a custom GCMBroadcastReceiver
+        GCMRegistrar.setRetryReceiverClassName(getClass().getName());
 
         String className = getGCMIntentServiceClassName(context);
         Log.v(TAG, "GCM IntentService class: " + className);

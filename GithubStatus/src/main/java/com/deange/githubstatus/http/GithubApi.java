@@ -69,6 +69,8 @@ public class GithubApi {
                 }
             }
         };
+
+        getTask.execute();
     }
 
     private static <T> T doApiGet(final BaseApi<T> api, final Type clazz, final String url) throws IOException {
