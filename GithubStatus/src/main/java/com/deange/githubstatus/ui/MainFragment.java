@@ -1,7 +1,10 @@
 package com.deange.githubstatus.ui;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +19,13 @@ import com.deange.githubstatus.ui.view.AutoScaleTextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
+    private SwipeRefreshLayout mSwipeLayout;
     private ViewGroup mContentLayout;
     private ViewGroup mProgressLayout;
     private TextView mLoadingView;
@@ -31,6 +36,9 @@ public class MainFragment extends Fragment {
 
     private MessagesAdapter mAdapter;
     private AutoScaleTextView mStatusView;
+
+    private static final int TOTAL_COMPONENTS = 2;
+    private final AtomicInteger mComponentsLoaded = new AtomicInteger();
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -55,6 +63,14 @@ public class MainFragment extends Fragment {
         mProgressLayout = (ViewGroup) view.findViewById(R.id.fragment_progress_layout);
         mLoadingView = (TextView) view.findViewById(R.id.loading_messages_view);
         mNothingView = (TextView) view.findViewById(R.id.no_messages_view);
+
+        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_swipe_container);
+        mSwipeLayout.setOnRefreshListener(this);
+        mSwipeLayout.setColorScheme(
+                R.color.status_good,
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_orange_dark);
 
         final ListView listview = (ListView) view.findViewById(R.id.fragment_messages_list_view);
         listview.setDivider(null);
@@ -90,7 +106,19 @@ public class MainFragment extends Fragment {
 
     }
 
+    @Override
+    public void onRefresh() {
+        // Called by SwipeRefreshLayout
+        Log.v(TAG, "onRefresh()");
+
+        refresh();
+    }
+
     public void refresh() {
+
+        mSwipeLayout.setRefreshing(true);
+        mComponentsLoaded.set(0);
+
         queryForStatus();
         queryForMessages();
     }
@@ -100,6 +128,8 @@ public class MainFragment extends Fragment {
         GithubApi.getStatus(getActivity(), GithubApi.LAST_MESSAGE, new HttpTask.Listener<Status>() {
             @Override
             public void onGet(final Status entity, final Exception exception) {
+
+                mComponentsLoaded.incrementAndGet();
 
                 if (exception != null) {
                     setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR));
@@ -119,6 +149,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onGet(final List<Status> entity, final Exception exception) {
 
+                mComponentsLoaded.incrementAndGet();
+
                 if (exception != null) {
                     setMessages(new ArrayList<Status>());
 
@@ -133,12 +165,24 @@ public class MainFragment extends Fragment {
 
     private void updateVisibility() {
 
-        final boolean someDataLoaded = (mStatus != null) || (mMessages != null);
+        final boolean someDataLoaded = mComponentsLoaded.get() > 0;
+        final boolean allDataLoaded  = mComponentsLoaded.get() == TOTAL_COMPONENTS;
 
         ViewUtils.setVisibility(mContentLayout, someDataLoaded);
         ViewUtils.setVisibility(mProgressLayout, !someDataLoaded);
 
         ViewUtils.setVisibility(mLoadingView, mMessages == null);
+
+        if (allDataLoaded) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipeLayout.setRefreshing(false);
+                }
+            }, 2000);
+
+//            mSwipeLayout.setRefreshing(false);
+        }
     }
 
     private void setStatus(final Status status) {
@@ -159,5 +203,4 @@ public class MainFragment extends Fragment {
 
         ViewUtils.setVisibility(mNothingView, (mMessages == null || mMessages.isEmpty()));
     }
-
 }

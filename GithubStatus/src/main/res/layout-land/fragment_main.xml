@@ -1,113 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:gs="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+             xmlns:gs="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/fragment_main_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+    <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/fragment_swipe_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
-
-            <com.deange.githubstatus.ui.view.AutoScaleTextView
-                android:id="@+id/fragment_status_title_text"
+        <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/fragment_status_text"
-                android:text="@string/github_title_text"
-                gs:fontName="@string/roboto_thin_italic" />
+                android:layout_height="match_parent">
 
-            <com.deange.githubstatus.ui.view.AutoScaleTextView
-                android:id="@+id/fragment_status_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                gs:fontName="@string/roboto_bold" />
+            <LinearLayout
+                    android:id="@+id/fragment_main_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-        </RelativeLayout>
+                <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
 
+                    <com.deange.githubstatus.ui.view.AutoScaleTextView
+                            android:id="@+id/fragment_status_title_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/fragment_status_text"
+                            android:text="@string/github_title_text"
+                            gs:fontName="@string/roboto_thin_italic"/>
 
-        <RelativeLayout
-            android:id="@+id/response_label_layout"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+                    <com.deange.githubstatus.ui.view.AutoScaleTextView
+                            android:id="@+id/fragment_status_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            gs:fontName="@string/roboto_bold"/>
 
-            <!-- DIVIDER HEADER -->
-            <TextView
-                android:id="@+id/response_label_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="4dp"
-                android:text="@string/loading_previous_messages"
-                android:textAllCaps="true"
-                android:textColor="@color/fragment_messages_header"
-                android:textStyle="bold" />
-
-            <View
-                android:id="@+id/response_label_view"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_below="@id/response_label_header"
-                android:background="@color/fragment_messages_header" />
-
-            <com.deange.githubstatus.ui.view.FontTextView
-                android:id="@+id/loading_messages_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/response_label_view"
-                android:text="@string/loading_status"
-                android:padding="10dp"
-                gs:fontName="@string/roboto_light_italic" />
-
-            <com.deange.githubstatus.ui.view.FontTextView
-                android:id="@+id/no_messages_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/loading_messages_view"
-                android:text="@string/no_messages_status"
-                android:padding="10dp"
-                android:visibility="gone"
-                gs:fontName="@string/roboto_light_italic" />
-
-            <ListView
-                android:id="@+id/fragment_messages_list_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@id/no_messages_view" />
-
-        </RelativeLayout>
+                </RelativeLayout>
 
 
-    </LinearLayout>
+                <RelativeLayout
+                        android:id="@+id/response_label_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+
+                    <!-- DIVIDER HEADER -->
+                    <TextView
+                            android:id="@+id/response_label_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="4dp"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/loading_previous_messages"
+                            android:textAllCaps="true"
+                            android:textColor="@color/fragment_messages_header"
+                            android:textStyle="bold"/>
+
+                    <View
+                            android:id="@+id/response_label_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:layout_below="@id/response_label_header"
+                            android:background="@color/fragment_messages_header"/>
+
+                    <com.deange.githubstatus.ui.view.FontTextView
+                            android:id="@+id/loading_messages_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/response_label_view"
+                            android:text="@string/loading_status"
+                            android:padding="10dp"
+                            gs:fontName="@string/roboto_light_italic"/>
+
+                    <com.deange.githubstatus.ui.view.FontTextView
+                            android:id="@+id/no_messages_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/loading_messages_view"
+                            android:text="@string/no_messages_status"
+                            android:padding="10dp"
+                            android:visibility="gone"
+                            gs:fontName="@string/roboto_light_italic"/>
+
+                    <ListView
+                            android:id="@+id/fragment_messages_list_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_below="@id/no_messages_view"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <RelativeLayout
-        android:id="@+id/fragment_progress_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+            android:id="@+id/fragment_progress_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
 
         <ProgressBar
-            android:id="@+id/fragment_progress_view"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+                android:id="@+id/fragment_progress_view"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
 
     </RelativeLayout>
 
