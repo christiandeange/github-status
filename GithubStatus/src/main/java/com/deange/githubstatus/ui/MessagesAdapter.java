@@ -41,32 +41,36 @@ public class MessagesAdapter extends ArrayAdapter<Status> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
+
+        final View view;
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_message, null);
+            view = LayoutInflater.from(getContext()).inflate(R.layout.list_item_message, null);
+        } else {
+            view = convertView;
         }
 
         final Status status = getItem(position);
 
-        ((TextView) convertView.findViewById(R.id.list_item_status)).setText(status.getBody());
+        ((TextView) view.findViewById(R.id.list_item_status)).setText(status.getBody());
 
         final Time messageTime = status.getCreatedOn();
         if (messageTime != null) {
-            ((TextView) convertView.findViewById(R.id.list_item_timestamp)).setText(
+            ((TextView) view.findViewById(R.id.list_item_timestamp)).setText(
                     messageTime.format("%B %d %Y, %r"));
         }
 
-        ViewUtils.setVisibility(convertView.findViewById(R.id.status_bar_top), position != 0);
-        ViewUtils.setVisibility(convertView.findViewById(R.id.status_bar_bottom), position != getCount() - 1);
+        ViewUtils.setVisibility(view.findViewById(R.id.status_bar_top), position != 0);
+        ViewUtils.setVisibility(view.findViewById(R.id.status_bar_bottom), position != getCount() - 1);
 
         final int statusColour = ViewUtils.resolveStatusColour(getContext(), status);
 
-        final View statusIndicator = convertView.findViewById(R.id.status_indicator_circle);
+        final View statusIndicator = view.findViewById(R.id.status_indicator_circle);
         final Drawable drawable = statusIndicator.getBackground();
         drawable.mutate().setColorFilter(statusColour, PorterDuff.Mode.SRC_ATOP);
         statusIndicator.setBackgroundDrawable(drawable);
 
-        return convertView;
+        return view;
     }
 }
