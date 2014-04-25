@@ -8,7 +8,7 @@ import com.squareup.okhttp.OkHttpClient;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-public abstract class BaseApi<T> {
+public abstract class BaseApi<S, T> {
 
 	protected final Context mContext;
 	private static final OkHttpClient sClient = new OkHttpClient();
@@ -23,19 +23,19 @@ public abstract class BaseApi<T> {
 		return sClient;
 	}
 
-	public T get(final Type clazz, final String url) throws IOException {
+	public S get(final Type clazz, final String url) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	public T post(final T entity, final String url) throws IOException {
+	public S post(final T entity, final String url) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	public T put(final T entity, final String url) throws IOException {
+	public S put(final T entity, final String url) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
-	public T delete(final T entity, final String url) throws IOException {
+	public S delete(final T entity, final String url) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 

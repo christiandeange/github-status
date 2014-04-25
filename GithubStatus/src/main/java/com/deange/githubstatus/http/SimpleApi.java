@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public abstract class SimpleApi<T> extends BaseApi<T> {
+public abstract class SimpleApi<T> extends OneParamApi<T> {
 
     private static final String TAG = SimpleApi.class.getSimpleName();
 
