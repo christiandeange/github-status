@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class MainFragment
+        extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
@@ -30,6 +33,7 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ViewGroup mProgressLayout;
     private TextView mLoadingView;
     private TextView mNothingView;
+    private ListView mListview;
 
     private Status mStatus;
     private List<Status> mMessages;
@@ -72,9 +76,10 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 android.R.color.holo_orange_light,
                 android.R.color.holo_orange_dark);
 
-        final ListView listview = (ListView) view.findViewById(R.id.fragment_messages_list_view);
-        listview.setDivider(null);
-        listview.setAdapter(mAdapter);
+        mListview = (ListView) view.findViewById(R.id.fragment_messages_list_view);
+        mListview.setDivider(null);
+        mListview.setAdapter(mAdapter);
+        mListview.setOnScrollListener(this);
 
         updateVisibility();
 
@@ -183,6 +188,17 @@ public class MainFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 //            mSwipeLayout.setRefreshing(false);
         }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        int topRowVerticalPosition = (mListview == null || mListview.getChildCount() == 0)
+                ? 0 : mListview.getChildAt(0).getTop();
+        mSwipeLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
     }
 
     private void setStatus(final Status status) {
