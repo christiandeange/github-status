@@ -15,12 +15,8 @@
  */
 package com.deange.githubstatus.gcm;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.deange.githubstatus.R;
@@ -39,8 +35,6 @@ public class GCMIntentService
         implements OnGCMMessageReceivedListener {
 
     private static final String TAG = GCMIntentService.class.getSimpleName();
-
-    private static final int NOTIFICATION_ID = 0xFaceb00c;
 
     public GCMIntentService() {
         super(GCMUtils.SENDER_ID);
