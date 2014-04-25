@@ -143,16 +143,49 @@ public class Status extends BaseModel {
 
     public static boolean shouldAlert(final Status oldStatus, final Status newStatus) {
 
-        if (oldStatus == null || newStatus == null) {
-            return true;
-        }
+        if (newStatus.getLevel().isHigherThan(Level.GOOD)) {
+            // Any time time the status changes and it is above GOOD,
+            // we should be alerting the change.
+            // Clients may block it if the user decides to.
+            return !Objects.equals(oldStatus, newStatus);
 
-        // Alert on any message in MINOR/MAJOR status
-        return newStatus.getLevel().isHigherThan(Level.GOOD) || oldStatus.getLevel() != newStatus.getLevel();
+        } else {
+            // Alert on a status level change
+            return oldStatus.getLevel() != newStatus.getLevel();
+        }
     }
 
     private Status() {
         // Uninstantiable
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (super.equals(obj)) {
+            return true;
+        }
+
+        if (!(obj instanceof Status)) {
+            return false;
+        }
+
+        final Status status = (Status) obj;
+
+        if (!Objects.equals(getBody(), status.getBody())) {
+            return false;
+
+        } else if (!Objects.equals(getStatus(), status.getStatus())) {
+            return false;
+
+        } else if (!Objects.equals(getLevel(), status.getLevel())) {
+            return false;
+
+        } else if (!Objects.equals(getCreatedOn(), status.getCreatedOn())) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
