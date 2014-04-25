@@ -45,7 +45,7 @@ public class GithubApi {
         return doApiGet(new GithubStatusMessagesApi(context), new TypeToken<List<Status>>(){}.getType(), GithubApi.LAST_MESSAGES);
     }
 
-    private static <T> void doApiGet(final BaseApi<T> api, final Type clazz, final String url, final HttpTask.Listener<T> listener) {
+    private static <T, S> void doApiGet(final BaseApi<T, S> api, final Type clazz, final String url, final HttpTask.Listener<T> listener) {
 
         final AsyncTask<Void, Void, T> getTask = new AsyncTask<Void, Void, T>() {
 
@@ -73,7 +73,7 @@ public class GithubApi {
         getTask.execute();
     }
 
-    private static <T> T doApiGet(final BaseApi<T> api, final Type clazz, final String url) throws IOException {
+    private static <T, S> T doApiGet(final BaseApi<T, S> api, final Type clazz, final String url) throws IOException {
         return api.get(clazz, url);
     }
 
