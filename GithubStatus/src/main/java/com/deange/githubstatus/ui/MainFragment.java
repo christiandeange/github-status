@@ -33,7 +33,7 @@ public class MainFragment
     private ViewGroup mProgressLayout;
     private TextView mLoadingView;
     private TextView mNothingView;
-    private ListView mListview;
+    private ListView mListView;
 
     private Status mStatus;
     private List<Status> mMessages;
@@ -76,10 +76,10 @@ public class MainFragment
                 android.R.color.holo_orange_light,
                 android.R.color.holo_orange_dark);
 
-        mListview = (ListView) view.findViewById(R.id.fragment_messages_list_view);
-        mListview.setDivider(null);
-        mListview.setAdapter(mAdapter);
-        mListview.setOnScrollListener(this);
+        mListView = (ListView) view.findViewById(R.id.fragment_messages_list_view);
+        mListView.setDivider(null);
+        mListView.setAdapter(mAdapter);
+        mListView.setOnScrollListener(this);
 
         updateVisibility();
 
@@ -136,16 +136,10 @@ public class MainFragment
 
                 mComponentsLoaded.incrementAndGet();
 
-                if (exception != null) {
-                    setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR));
-
-                } else {
-                    setStatus(entity);
-                }
-
+                final Status status = (exception == null) ? entity : Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR);
+                setStatus(status);
             }
         });
-
     }
 
     private void queryForMessages() {
@@ -156,16 +150,10 @@ public class MainFragment
 
                 mComponentsLoaded.incrementAndGet();
 
-                if (exception != null) {
-                    setMessages(new ArrayList<Status>());
-
-                } else {
-                    setMessages(entity);
-                }
-
+                final List<Status> statuses = (exception == null) ? entity : new ArrayList<Status>();
+                setMessages(statuses);
             }
         });
-
     }
 
     private void updateVisibility() {
@@ -191,14 +179,17 @@ public class MainFragment
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
     }
 
     @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        int topRowVerticalPosition = (mListview == null || mListview.getChildCount() == 0)
-                ? 0 : mListview.getChildAt(0).getTop();
-        mSwipeLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+    public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+
+        if (view == mListView) {
+            int topRowVerticalPosition = (mListView == null || mListView.getChildCount() == 0)
+                    ? 0 : mListView.getChildAt(0).getTop();
+            mSwipeLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+        }
     }
 
     private void setStatus(final Status status) {
