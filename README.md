@@ -1,16 +1,16 @@
 github-status
 =============
 
-Simple app to connect to the GitHub Status API. [Download the app!][1].
+Simple app to connect to the GitHub Status API. [Download the app!][1]
 
 ---
 ###What is it?
-GitHub-Status is an app to keep you up-to-date with the most recent status is GitHub, built on top of the [GitHub Status API][1].
+GitHub-Status keeps you up-to-date with the most recent status of GitHub, built on top of their [Status API][1].
 
 ---
 ###Dependencies
-GitHub Status uses the **Android Support Library** for the components it provides, even though it only supports ICS and above.
-It also uses **Gson** and **OkHttp** for network connections, and decoding JSON from the Status API.
+GitHub Status uses the **Android Support Library** for the provided components, even though it only supports ICS and above.
+It also leverages **Gson** and **OkHttp** for network connections and decoding JSON from the Status API.
 There is also **ORMLite** compiled into the application, for future database usage (if need be, still need to decide).
 
 GitHub Status supports API level 14 (Ice Cream Sandwich) and above.
