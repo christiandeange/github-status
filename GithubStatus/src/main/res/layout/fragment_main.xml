@@ -76,19 +76,4 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <RelativeLayout
-            android:id="@+id/fragment_progress_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-        <ProgressBar
-                android:id="@+id/fragment_progress_view"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"/>
-
-    </RelativeLayout>
-
 </FrameLayout>

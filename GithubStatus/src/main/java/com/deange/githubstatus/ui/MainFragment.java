@@ -32,7 +32,6 @@ public class MainFragment
 
     private SwipeRefreshLayout mSwipeLayout;
     private ViewGroup mContentLayout;
-    private ViewGroup mProgressLayout;
     private TextView mLoadingView;
     private TextView mNothingView;
     private ListView mListView;
@@ -67,7 +66,6 @@ public class MainFragment
 
         mStatusView = (AutoScaleTextView) view.findViewById(R.id.fragment_status_text);
         mContentLayout = (ViewGroup) view.findViewById(R.id.fragment_main_content);
-        mProgressLayout = (ViewGroup) view.findViewById(R.id.fragment_progress_layout);
         mLoadingView = (TextView) view.findViewById(R.id.loading_messages_view);
         mNothingView = (TextView) view.findViewById(R.id.no_messages_view);
 
@@ -93,7 +91,7 @@ public class MainFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mLastUpdate = System.currentTimeMillis();
+        resetFieldsForRefresh();
 
         // Refresh status view
         if (mStatus == null) {
@@ -124,11 +122,15 @@ public class MainFragment
         refresh();
     }
 
-    public void refresh() {
-
+    private void resetFieldsForRefresh() {
         mSwipeLayout.setRefreshing(true);
         mComponentsLoaded.set(0);
         mLastUpdate = System.currentTimeMillis();
+    }
+
+    public void refresh() {
+
+        resetFieldsForRefresh();
 
         queryForStatus();
         queryForMessages();
@@ -168,8 +170,6 @@ public class MainFragment
         final boolean allDataLoaded  = mComponentsLoaded.get() == TOTAL_COMPONENTS;
 
         ViewUtils.setVisibility(mContentLayout, someDataLoaded);
-        ViewUtils.setVisibility(mProgressLayout, !someDataLoaded);
-
         ViewUtils.setVisibility(mLoadingView, mMessages == null);
 
         if (allDataLoaded) {
