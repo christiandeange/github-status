@@ -27,6 +27,8 @@ public class MainFragment
         implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
 
     public static final String TAG = MainFragment.class.getSimpleName();
+    private static final long MINIMUM_UPDATE_DURATION = 1000;
+    private static final int TOTAL_COMPONENTS = 2;
 
     private SwipeRefreshLayout mSwipeLayout;
     private ViewGroup mContentLayout;
@@ -34,15 +36,16 @@ public class MainFragment
     private TextView mLoadingView;
     private TextView mNothingView;
     private ListView mListView;
+    private AutoScaleTextView mStatusView;
 
     private Status mStatus;
     private List<Status> mMessages;
 
     private MessagesAdapter mAdapter;
-    private AutoScaleTextView mStatusView;
 
-    private static final int TOTAL_COMPONENTS = 2;
     private final AtomicInteger mComponentsLoaded = new AtomicInteger();
+    private final Handler mHandler = new Handler();
+    private long mLastUpdate = 0;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -90,6 +93,8 @@ public class MainFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mLastUpdate = System.currentTimeMillis();
+
         // Refresh status view
         if (mStatus == null) {
             setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING));
@@ -123,6 +128,7 @@ public class MainFragment
 
         mSwipeLayout.setRefreshing(true);
         mComponentsLoaded.set(0);
+        mLastUpdate = System.currentTimeMillis();
 
         queryForStatus();
         queryForMessages();
@@ -167,14 +173,19 @@ public class MainFragment
         ViewUtils.setVisibility(mLoadingView, mMessages == null);
 
         if (allDataLoaded) {
-            new Handler().postDelayed(new Runnable() {
+
+            // We want to keep the refresh UI up for *at least* MINIMUM_UPDATE_DURATION
+            // Otherwise it looks very choppy and overall not a pleasant look
+            final long now = System.currentTimeMillis();
+            final long delay = MINIMUM_UPDATE_DURATION - (now - mLastUpdate);
+            mLastUpdate = 0;
+
+            mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mSwipeLayout.setRefreshing(false);
                 }
-            }, 2000);
-
-//            mSwipeLayout.setRefreshing(false);
+            }, delay);
         }
     }
 
