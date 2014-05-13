@@ -2,7 +2,6 @@ package com.deange.githubstatus.http;
 
 import android.content.Context;
 
-import com.deange.githubstatus.model.BaseModel;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.IOException;

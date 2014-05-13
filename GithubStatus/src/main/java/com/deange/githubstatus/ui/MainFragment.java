@@ -95,11 +95,11 @@ public class MainFragment
         super.onActivityCreated(savedInstanceState);
 
         // Refresh status view
-        if (mStatus == null) {
-            setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING));
-
-        } else {
+        if (mStatus != null) {
             setStatus(mStatus);
+        } else {
+
+            setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING));
         }
 
         // Refresh messages view
@@ -107,7 +107,7 @@ public class MainFragment
             setMessages(mMessages);
         }
 
-        // Continue loadig status info if necessary
+        // Continue loading status info if necessary
         if (mStatus == null || mMessages == null) {
             refresh();
         }
