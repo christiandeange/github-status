@@ -54,6 +54,7 @@ public class MainFragment
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         mAdapter = new MessagesAdapter(getActivity(), R.layout.list_item_message);
@@ -61,6 +62,7 @@ public class MainFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView()");
 
         final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_main, null);
 
@@ -89,28 +91,26 @@ public class MainFragment
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        Log.v(TAG, "onActivityCreated()");
         super.onActivityCreated(savedInstanceState);
-
-        resetFieldsForRefresh();
 
         // Refresh status view
         if (mStatus == null) {
             setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING));
-            queryForStatus();
 
         } else {
             setStatus(mStatus);
         }
 
         // Refresh messages view
-        if (mMessages == null) {
-            queryForMessages();
-
-        } else {
+        if (mMessages != null) {
             setMessages(mMessages);
         }
 
-        updateVisibility();
+        // Continue loadig status info if necessary
+        if (mStatus == null || mMessages == null) {
+            refresh();
+        }
 
     }
 
