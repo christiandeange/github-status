@@ -47,7 +47,7 @@ public class MainFragment
     private long mLastUpdate = 0;
 
     public static MainFragment newInstance() {
-        MainFragment fragment = new MainFragment();
+        final MainFragment fragment = new MainFragment();
         fragment.setRetainInstance(true);
         return fragment;
     }
@@ -61,7 +61,7 @@ public class MainFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView()");
 
         final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_main, null);
@@ -90,7 +90,7 @@ public class MainFragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final Bundle savedInstanceState) {
         Log.v(TAG, "onActivityCreated()");
         super.onActivityCreated(savedInstanceState);
 
