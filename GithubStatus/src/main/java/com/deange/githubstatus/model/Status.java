@@ -22,7 +22,7 @@ public class Status extends BaseModel {
     public static final String CREATED_ON = "created_on";
     public static final String VERSION = "version";
 
-    private static final Map<String, Integer> mStatusMap = new HashMap<String, Integer>();
+    private static final Map<String, Integer> mStatusMap = new HashMap<>();
     static {
         mStatusMap.put(GithubApi.STATUS_UNAVAILABLE, R.string.error_server_unavailable_status);
         mStatusMap.put(GithubApi.STATUS_GOOD, R.string.status_good);

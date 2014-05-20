@@ -32,6 +32,8 @@ public final class GCMUtils {
 
     public static final String TAG = GCMUtils.class.getSimpleName();
 
+    public static final String RELEASE_SERVER_URL = "http://githubstatus.appspot.com";
+
     public static final String SENDER_ID = BuildConfig.SENDER_ID;
     public static final String SERVER_URL = BuildConfig.SERVER_URL;
     public static final String EXTRA_MESSAGE = Utils.buildAction("message");
@@ -44,13 +46,13 @@ public final class GCMUtils {
             Utils.buildAction("GCM_MESSAGE_RECEIVED");
 
     public static void displayMessage(final Context context, final String message) {
-        Intent intent = new Intent(ACTION_DISPLAY_MESSAGE);
+        final Intent intent = new Intent(ACTION_DISPLAY_MESSAGE);
         intent.putExtra(EXTRA_MESSAGE, message);
         context.sendBroadcast(intent);
     }
 
     public static void onGcmMessageReceived(final Context context, final Bundle extras) {
-        Intent intent = new Intent(ACTION_GCM_MESSAGE_RECEIVED);
+        final Intent intent = new Intent(ACTION_GCM_MESSAGE_RECEIVED);
         intent.putExtra(EXTRA_BUNDLE, extras);
         context.sendBroadcast(intent);
     }

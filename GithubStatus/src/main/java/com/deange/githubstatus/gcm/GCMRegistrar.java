@@ -149,7 +149,7 @@ public final class GCMRegistrar {
             Log.v(TAG, "number of receivers for " + packageName + ": " + receivers.length);
         }
 
-        Set<String> allowedReceivers = new HashSet<String>();
+        final Set<String> allowedReceivers = new HashSet<>();
         for (ActivityInfo receiver : receivers) {
             if (GCMConstants.PERMISSION_GCM_INTENTS.equals(
                     receiver.permission)) {

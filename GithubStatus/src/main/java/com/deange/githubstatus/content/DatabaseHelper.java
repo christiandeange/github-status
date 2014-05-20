@@ -23,17 +23,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public static final String DATABASE_NAME = "gsapp.db";
     public static final int DATABASE_VERSION = 1;
 
-	private static WeakReference<Callback> mCallbackReference = new WeakReference<Callback>(Fallback.INSTANCE);
+	private static WeakReference<Callback> mCallbackReference = new WeakReference<>(Fallback.INSTANCE);
 
-	private final Map<Class<? extends BaseModel>, Dao<? extends BaseModel, Long>> mDaoMap =
-            new HashMap<Class<? extends BaseModel>, Dao<? extends BaseModel, Long>>();
+	private final Map<Class<? extends BaseModel>, Dao<? extends BaseModel, Long>> mDaoMap = new HashMap<>();
 
 	public interface Callback {
         public void onUpgrade(final SQLiteDatabase db, final ConnectionSource connection, final int oldVersion, final int newVersion);
 	}
 
 	public static void setDatabaseCallback(final Callback databaseCallback) {
-		mCallbackReference = new WeakReference<Callback>(databaseCallback);
+		mCallbackReference = new WeakReference<>(databaseCallback);
 	}
 
 	public static synchronized DatabaseHelper getInstance(final Context context) {
