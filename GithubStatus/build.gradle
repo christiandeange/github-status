@@ -13,37 +13,21 @@ repositories {
     mavenCentral()
 }
 
+def majorVersion = 1;
+def minorVersion = 1;
+def buildVersion = 0;
+
+
 android {
     compileSdkVersion 19
     buildToolsVersion '19.0.3'
 
-    buildTypes {
-
-        all {
-            buildConfigField "String", "SENDER_ID", "\"196611706338\""
-        }
-
-        debug {
-            def proc = (project.projectDir.absolutePath + "/dev.sh").execute()
-            proc.waitFor()
-            def localhostIpAddr = "http://" + proc.in.text.split("\n")[0] + ":8080"
-
-            buildConfigField "String", "SERVER_URL", "\"${localhostIpAddr}\""
-        }
-
-        release {
-            buildConfigField "String", "SERVER_URL", "\"http://githubstatus.appspot.com\""
-        }
-
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
+
+        versionName "${majorVersion}.${minorVersion}" + (buildVersion == 0 ? "" : "${buildVersion}")
+        versionCode ((majorVersion * 100) + (minorVersion * 10) + (buildVersion * 1))
     }
 
     compileOptions {
@@ -61,7 +45,22 @@ android {
     }
 
     buildTypes {
+
+        all {
+            buildConfigField "String", "SENDER_ID", "\"196611706338\""
+        }
+
+        debug {
+            def proc = (project.projectDir.absolutePath + "/dev.sh").execute()
+            proc.waitFor()
+            def localhostIpAddr = "http://" + proc.in.text.split("\n")[0] + ":8080"
+
+            buildConfigField "String", "SERVER_URL", "\"${localhostIpAddr}\""
+        }
+
         release {
+            buildConfigField "String", "SERVER_URL", "\"http://githubstatus.appspot.com\""
+
             signingConfig signingConfigs.release
         }
     }
@@ -74,13 +73,13 @@ android {
 task askForPasswords << {
 
     if (System.console() == null) {
-        throw new UnsupportedOperationException("No console available!")
+        throw new RuntimeException("No console available!")
     }
 
-    def filePath = new File(System.getenv("KEYSTORE_PATH"))
-    def alias = System.getenv("KEYSTORE_ALIAS")
-    def storePw = new String(System.console().readPassword("\nKeystore password: "))
-    def keyPw  = new String(System.console().readPassword("Key password for '" + alias + "': "))
+    def filePath    = new File(System.getenv("KEYSTORE_PATH"))
+    def alias       = System.getenv("KEYSTORE_ALIAS")
+    def storePw     = new String(System.console().readPassword("\nKeystore password: "))
+    def keyPw       = new String(System.console().readPassword("Key password for '" + alias + "': "))
 
     android.signingConfigs.release.storeFile = filePath
     android.signingConfigs.release.keyAlias = alias
@@ -89,7 +88,7 @@ task askForPasswords << {
 }
 
 tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("packageRelease")) {
+    if ("packageRelease".equals(theTask.name)) {
         theTask.dependsOn "askForPasswords"
     }
 }
