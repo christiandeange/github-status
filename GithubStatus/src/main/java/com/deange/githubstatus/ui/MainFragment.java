@@ -31,7 +31,6 @@ public class MainFragment
     private static final int TOTAL_COMPONENTS = 2;
 
     private SwipeRefreshLayout mSwipeLayout;
-    private ViewGroup mContentLayout;
     private TextView mLoadingView;
     private TextView mNothingView;
     private ListView mListView;
@@ -67,7 +66,6 @@ public class MainFragment
         final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_main, null);
 
         mStatusView = (AutoScaleTextView) view.findViewById(R.id.fragment_status_text);
-        mContentLayout = (ViewGroup) view.findViewById(R.id.fragment_main_content);
         mLoadingView = (TextView) view.findViewById(R.id.loading_messages_view);
         mNothingView = (TextView) view.findViewById(R.id.no_messages_view);
 
@@ -94,21 +92,20 @@ public class MainFragment
         Log.v(TAG, "onActivityCreated()");
         super.onActivityCreated(savedInstanceState);
 
-        // Refresh status view
-        if (mStatus != null) {
-            setStatus(mStatus);
-        } else {
+        // Store this result ahead of time since the status and messages references
+        // may point to intermediary (ie: pending) results
+        final boolean shouldRefresh = (mStatus == null || mMessages == null);
 
-            setStatus(Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING));
-        }
+        // Refresh status view
+        mStatus = (mStatus == null) ? Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING) : mStatus;
+        setStatus(mStatus);
 
         // Refresh messages view
-        if (mMessages != null) {
-            setMessages(mMessages);
-        }
+        mMessages = (mMessages == null) ? new ArrayList<Status>() : mMessages;
+        setMessages(mMessages);
 
         // Continue loading status info if necessary
-        if (mStatus == null || mMessages == null) {
+        if (shouldRefresh) {
             refresh();
         }
 
@@ -166,11 +163,10 @@ public class MainFragment
 
     private void updateVisibility() {
 
-        final boolean someDataLoaded = mComponentsLoaded.get() > 0;
         final boolean allDataLoaded  = mComponentsLoaded.get() == TOTAL_COMPONENTS;
 
-        ViewUtils.setVisibility(mContentLayout, someDataLoaded);
         ViewUtils.setVisibility(mLoadingView, mMessages == null);
+        ViewUtils.setVisibility(mNothingView, (mMessages == null || mMessages.isEmpty()));
 
         if (allDataLoaded) {
 
@@ -204,21 +200,21 @@ public class MainFragment
     }
 
     private void setStatus(final Status status) {
-        mStatus = status;
-        mStatus.calculateVersion();
 
-        mStatusView.setTextColor(ViewUtils.resolveStatusColour(getActivity(), status));
-        mStatusView.setText(status.getTranslatedStatus(getActivity()).toUpperCase());
+        mStatus = (status == null) ? Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR) : status;
+
+        mStatusView.setTextColor(ViewUtils.resolveStatusColour(getActivity(), mStatus));
+        mStatusView.setText(mStatus.getTranslatedStatus(getActivity()).toUpperCase());
 
         updateVisibility();
     }
 
     private void setMessages(final List<Status> response) {
-        mMessages = response;
-        mAdapter.refresh(response);
+
+        mMessages = (response == null) ? new ArrayList<Status>() : response;
+
+        mAdapter.refresh(mMessages);
 
         updateVisibility();
-
-        ViewUtils.setVisibility(mNothingView, (mMessages == null || mMessages.isEmpty()));
     }
 }
