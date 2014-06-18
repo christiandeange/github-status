@@ -17,6 +17,9 @@ import java.util.Calendar;
 public class MainActivity extends FragmentActivity {
 
     private MainFragment mFragment;
+    private AlertDialog mDialog;
+
+    private static final String AVATAR_URL = "https://plus.google.com/+ChristianDeAngelis";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,16 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.cancel();
+            mDialog = null;
+        }
+
+        super.onDestroy();
+    }
+
     private void showInfoDialog() {
 
         final String developerName = getString(R.string.about_developer_name, Calendar.getInstance().get(Calendar.YEAR));
@@ -46,8 +59,7 @@ public class MainActivity extends FragmentActivity {
         ((TextView) dialogContentView.findViewById(R.id.dialog_about_version_name)).setText(versionName);
         Linkify.addLinks((TextView) dialogContentView.findViewById(R.id.dialog_about_description), Linkify.WEB_URLS);
 
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.app_name)
+        mDialog = new AlertDialog.Builder(this)
                 .setView(dialogContentView)
                 .show();
     }
