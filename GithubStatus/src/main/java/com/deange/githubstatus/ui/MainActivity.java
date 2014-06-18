@@ -1,6 +1,9 @@
 package com.deange.githubstatus.ui;
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.util.Linkify;
@@ -13,8 +16,9 @@ import com.deange.githubstatus.R;
 import com.deange.githubstatus.Utils;
 
 import java.util.Calendar;
+import java.util.Locale;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
     private MainFragment mFragment;
     private AlertDialog mDialog;
@@ -52,12 +56,9 @@ public class MainActivity extends FragmentActivity {
     private void showInfoDialog() {
 
         final String developerName = getString(R.string.about_developer_name, Calendar.getInstance().get(Calendar.YEAR));
-        final String versionName = getString(R.string.app_version, Utils.getVersionName(this));
-
         final View dialogContentView = getLayoutInflater().inflate(R.layout.dialog_about, null);
         ((TextView) dialogContentView.findViewById(R.id.dialog_about_developer_name)).setText(developerName);
-        ((TextView) dialogContentView.findViewById(R.id.dialog_about_version_name)).setText(versionName);
-        Linkify.addLinks((TextView) dialogContentView.findViewById(R.id.dialog_about_description), Linkify.WEB_URLS);
+        dialogContentView.findViewById(R.id.dialog_about_avatar).setOnClickListener(this);
 
         mDialog = new AlertDialog.Builder(this)
                 .setView(dialogContentView)
@@ -89,5 +90,16 @@ public class MainActivity extends FragmentActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    public void onClick(final View v) {
+
+        switch (v.getId()) {
+            case R.id.dialog_about_avatar:
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(AVATAR_URL)));
+                break;
+        }
+
     }
 }
