@@ -2,10 +2,15 @@
 <resources>
 
     <attr name="autoScaleTextViewStyle" format="reference" />
-
     <declare-styleable name="AutoScaleTextView">
+        <attr name="scaleFactor" format="fraction" />
         <attr name="minTextSize" format="dimension" />
         <attr name="maxTextSize" format="dimension" />
+    </declare-styleable>
+
+    <attr name="fontTextViewStyle" format="reference" />
+    <declare-styleable name="FontTextView">
         <attr name="fontName" format="string"/>
     </declare-styleable>
+
 </resources>

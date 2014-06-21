@@ -13,9 +13,11 @@ import com.deange.githubstatus.R;
 
 public class AutoScaleTextView extends FontTextView {
 
+    private float mScaleFactor;
     private float mMinTextSize;
     private float mMaxTextSize;
 
+    private static final float DEFAULT_SCALED_FACTOR = 1f;
     private static final float DEFAULT_MIN_TEXT_SIZE = 10f;
     private static final float DEFAULT_MAX_TEXT_SIZE = 256f;
     private static final int DEFAULT_LINE_COUNT = 1;
@@ -33,10 +35,12 @@ public class AutoScaleTextView extends FontTextView {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AutoScaleTextView, defStyle, 0);
 
+        mScaleFactor = DEFAULT_SCALED_FACTOR;
         mMinTextSize = DEFAULT_MIN_TEXT_SIZE;
         mMaxTextSize = DEFAULT_MAX_TEXT_SIZE;
 
         if (a != null) {
+            mScaleFactor = a.getFraction(R.styleable.AutoScaleTextView_scaleFactor, 1, 1, DEFAULT_SCALED_FACTOR);
             mMinTextSize = a.getDimension(R.styleable.AutoScaleTextView_minTextSize, DEFAULT_MIN_TEXT_SIZE);
             mMaxTextSize = a.getDimension(R.styleable.AutoScaleTextView_maxTextSize, DEFAULT_MAX_TEXT_SIZE);
 
@@ -63,21 +67,27 @@ public class AutoScaleTextView extends FontTextView {
             paint.setTextSize(size);
         }
 
-        // Renormalize
-        size = Math.min(size, mMaxTextSize);
-
         while (getLineCount(paint) > DEFAULT_LINE_COUNT) {
             if (size <= mMinTextSize) break;
             size -= 1;
             paint.setTextSize(size);
         }
 
+        size *= mScaleFactor;
+
         // Renormalize
+        size = Math.min(size, mMaxTextSize);
         size = Math.max(size, mMinTextSize);
 
-        // We would rather undershoot rather than overshoot
         setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+    }
 
+    public void setScaleFactor(final float scaleFactor) {
+        mScaleFactor = scaleFactor;
+    }
+
+    public float getScaleFactor() {
+        return mScaleFactor;
     }
 
     public int getLineCount(final TextPaint paint) {

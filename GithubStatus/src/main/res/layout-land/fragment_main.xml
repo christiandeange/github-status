@@ -3,7 +3,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:gs="http://schemas.android.com/apk/res-auto"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+             android:layout_height="match_parent"
+             android:animateLayoutChanges="true" >
 
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_swipe_container"
@@ -27,17 +28,19 @@
                         android:id="@+id/fragment_status_title_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_above="@+id/fragment_status_text"
+                        android:layout_above="@+id/fragment_status_text_flipper"
+                        android:gravity="center_horizontal"
                         android:text="@string/github_title_text"
                         gs:fontName="@string/roboto_thin_italic"/>
 
-                <com.deange.githubstatus.ui.view.AutoScaleTextView
-                        android:id="@+id/fragment_status_text"
+                <ViewSwitcher
+                        android:id="@+id/fragment_status_text_flipper"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:gravity="center_horizontal"
-                        gs:fontName="@string/roboto_bold"/>
+                        android:foregroundGravity="center_horizontal"
+                        android:inAnimation="@android:anim/slide_in_left"
+                        android:outAnimation="@android:anim/slide_out_right"/>
 
             </RelativeLayout>
 

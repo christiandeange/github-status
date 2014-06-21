@@ -1,5 +1,7 @@
 package com.deange.githubstatus.ui;
 
+import android.animation.LayoutTransition;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -11,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.content.GsonController;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;
 import com.deange.githubstatus.model.Status;
@@ -24,9 +28,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainFragment
         extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
+        implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener, ViewSwitcher.ViewFactory {
 
     public static final String TAG = MainFragment.class.getSimpleName();
+
+    private static final String KEY_STATUS = ".status";
     private static final long MINIMUM_UPDATE_DURATION = 1000;
     private static final int TOTAL_COMPONENTS = 2;
 
@@ -34,7 +40,7 @@ public class MainFragment
     private TextView mLoadingView;
     private TextView mNothingView;
     private ListView mListView;
-    private AutoScaleTextView mStatusView;
+    private ViewSwitcher mStatusView;
 
     private Status mStatus;
     private List<Status> mMessages;
@@ -46,9 +52,11 @@ public class MainFragment
     private long mLastUpdate = 0;
 
     public static MainFragment newInstance() {
-        final MainFragment fragment = new MainFragment();
-        fragment.setRetainInstance(true);
-        return fragment;
+        return new MainFragment();
+    }
+
+    public MainFragment() {
+        super();
     }
 
     @Override
@@ -57,6 +65,14 @@ public class MainFragment
         super.onCreate(savedInstanceState);
 
         mAdapter = new MessagesAdapter(getActivity(), R.layout.list_item_message);
+
+        if (savedInstanceState != null) {
+            mStatus = GsonController.getInstance().fromJson(
+                    savedInstanceState.getString(KEY_STATUS, null), Status.class);
+        }
+        if (mStatus == null) {
+            mStatus = Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING);
+        }
     }
 
     @Override
@@ -65,7 +81,8 @@ public class MainFragment
 
         final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_main, null);
 
-        mStatusView = (AutoScaleTextView) view.findViewById(R.id.fragment_status_text);
+        mStatusView = (ViewSwitcher) view.findViewById(R.id.fragment_status_text_flipper);
+        mStatusView.setFactory(this);
         mLoadingView = (TextView) view.findViewById(R.id.loading_messages_view);
         mNothingView = (TextView) view.findViewById(R.id.no_messages_view);
 
@@ -109,6 +126,12 @@ public class MainFragment
             refresh();
         }
 
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        outState.putString(KEY_STATUS, GsonController.getInstance().toJson(mStatus));
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -200,21 +223,31 @@ public class MainFragment
     }
 
     private void setStatus(final Status status) {
+        mStatus = (status == null)
+                ? Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR)
+                : status;
 
-        mStatus = (status == null) ? Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR) : status;
-
-        mStatusView.setTextColor(ViewUtils.resolveStatusColour(getActivity(), mStatus));
-        mStatusView.setText(mStatus.getTranslatedStatus(getActivity()).toUpperCase());
-
+        mStatusView.setDisplayedChild(mStatusView.getDisplayedChild() == 0 ? 1 : 0);
+        updateStatusView((TextView) mStatusView.getChildAt(mStatusView.getDisplayedChild()));
         updateVisibility();
     }
 
     private void setMessages(final List<Status> response) {
-
         mMessages = (response == null) ? new ArrayList<Status>() : response;
-
         mAdapter.refresh(mMessages);
-
         updateVisibility();
+    }
+
+    @Override
+    public View makeView() {
+        final TextView view = (TextView) LayoutInflater.from(getActivity()).inflate(
+                R.layout.view_flipper_item, (ViewGroup) getView(), false);
+        updateStatusView(view);
+        return view;
+    }
+
+    private void updateStatusView(final TextView view) {
+        view.setTextColor(ViewUtils.resolveStatusColour(getActivity(), mStatus));
+        view.setText(mStatus.getTranslatedStatus(getActivity()).toUpperCase());
     }
 }

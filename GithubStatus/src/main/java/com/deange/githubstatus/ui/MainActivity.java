@@ -29,7 +29,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         getActionBar().setTitle(R.string.app_name);
 
         mFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);

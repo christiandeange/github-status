@@ -22,12 +22,11 @@ public class FontTextView extends TextView {
     public FontTextView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AutoScaleTextView, defStyle, 0);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FontTextView, defStyle, 0);
 
         String fontName = null;
-
         if (a != null) {
-            fontName = a.getString(R.styleable.AutoScaleTextView_fontName);
+            fontName = a.getString(R.styleable.FontTextView_fontName);
             a.recycle();
         }
 

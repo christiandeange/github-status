@@ -57,6 +57,7 @@ public class SelectableRoundedImageView extends RoundedImageView {
             case MotionEvent.ACTION_MOVE:
                 if (!inBounds) {
                     super.setBorderColor(mNormalColour);
+                    return true;
                 }
                 break;
 
