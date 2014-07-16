@@ -2,28 +2,32 @@ package com.deange.githubstatus.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.Utils;
 import com.deange.githubstatus.gcm.GCMBaseActivity;
 
 import java.util.Calendar;
 
 public class MainActivity
-        extends GCMBaseActivity {
+        extends GCMBaseActivity
+        implements View.OnClickListener {
 
     private MainFragment mFragment;
+    private AlertDialog mDialog;
+
+    private static final String AVATAR_URL = "https://plus.google.com/+ChristianDeAngelis";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getActionBar().setTitle(R.string.app_name);
 
         mFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
         if (mFragment == null) {
@@ -36,18 +40,24 @@ public class MainActivity
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.cancel();
+            mDialog = null;
+        }
+
+        super.onDestroy();
+    }
+
     private void showInfoDialog() {
 
         final String developerName = getString(R.string.about_developer_name, Calendar.getInstance().get(Calendar.YEAR));
-        final String versionName = getString(R.string.app_version, Utils.getVersionName(this));
-
         final View dialogContentView = getLayoutInflater().inflate(R.layout.dialog_about, null);
         ((TextView) dialogContentView.findViewById(R.id.dialog_about_developer_name)).setText(developerName);
-        ((TextView) dialogContentView.findViewById(R.id.dialog_about_version_name)).setText(versionName);
-        Linkify.addLinks((TextView) dialogContentView.findViewById(R.id.dialog_about_description), Linkify.WEB_URLS);
+        dialogContentView.findViewById(R.id.dialog_about_avatar).setOnClickListener(this);
 
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.app_name)
+        mDialog = new AlertDialog.Builder(this)
                 .setView(dialogContentView)
                 .show();
     }
@@ -87,5 +97,15 @@ public class MainActivity
     public void onGcmMessageReceived(final Intent intent) {
         // Reload the fragment's content view
         refresh();
+    }
+
+    @Override
+    public void onClick(final View v) {
+
+        switch (v.getId()) {
+            case R.id.dialog_about_avatar:
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(AVATAR_URL)));
+                break;
+        }
     }
 }

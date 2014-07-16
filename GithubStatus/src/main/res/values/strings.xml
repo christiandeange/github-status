@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">GitHub Status</string>
-    <string name="app_version">Version %s</string>
     <string name="action_settings">Settings</string>
 
     <string name="gs_authority_content" translateable="false">com.deange.githubstatus</string>
@@ -19,7 +18,7 @@
     <string name="info_sync">Refresh</string>
     <string name="about_developer_name_default">© Christian De Angelis</string>
     <string name="about_developer_name">© Christian De Angelis, %s</string>
-    <string name="about_app_description">GitHub Status is built upon the GitHub Status API, http://status.github.com</string>
+    <string name="about_disclaimer">This app is not affiliated with github.com</string>
 
     <string name="status_good">Good</string>
     <string name="status_minor">Minor</string>

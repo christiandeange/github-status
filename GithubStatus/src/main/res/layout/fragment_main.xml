@@ -3,7 +3,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:gs="http://schemas.android.com/apk/res-auto"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+             android:layout_height="match_parent"
+             android:animateLayoutChanges="true" >
 
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_swipe_container"
@@ -18,13 +19,14 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp">
 
-            <com.deange.githubstatus.ui.view.AutoScaleTextView
-                    android:id="@+id/fragment_status_text"
+            <ViewSwitcher
+                    android:id="@+id/fragment_status_text_flipper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:gravity="center_horizontal"
-                    gs:fontName="@string/roboto_bold"/>
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:inAnimation="@android:anim/slide_in_left"
+                    android:outAnimation="@android:anim/slide_out_right"/>
 
             <TextView
                     android:id="@+id/response_label_header"
@@ -33,7 +35,7 @@
                     android:layout_marginBottom="4dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="4dp"
-                    android:layout_below="@id/fragment_status_text"
+                    android:layout_below="@id/fragment_status_text_flipper"
                     android:text="@string/loading_previous_messages"
                     android:textAllCaps="true"
                     android:textColor="@color/fragment_messages_header"
