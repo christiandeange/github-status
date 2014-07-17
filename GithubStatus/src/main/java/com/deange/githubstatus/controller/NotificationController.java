@@ -66,12 +66,16 @@ public class NotificationController {
         final PendingIntent intent = PendingIntent.getActivity(
                 mContext, NOTIFICATION_ID, notificationIntent, 0);
 
+        final NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle()
+                .bigText(notifBody);
+
         final Notification notification = new NotificationCompat.Builder(mContext)
                 .setContentTitle(title)
                 .setContentText(notifBody)
                 .setSmallIcon(tickerIcon)
                 .setLargeIcon(largeIcon)
                 .setTicker(notifBody)
+                .setStyle(style)
                 .setWhen(when)
                 .setContentIntent(intent)
                 .setAutoCancel(true)
