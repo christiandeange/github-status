@@ -63,7 +63,8 @@ public class NotificationController {
 
         final Intent notificationIntent = new Intent(mContext, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent intent = PendingIntent.getActivity(mContext, NOTIFICATION_ID, notificationIntent, 0);
+        final PendingIntent intent = PendingIntent.getActivity(
+                mContext, NOTIFICATION_ID, notificationIntent, 0);
 
         final Notification notification = new NotificationCompat.Builder(mContext)
                 .setContentTitle(title)

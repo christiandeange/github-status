@@ -15,7 +15,6 @@
  */
 package com.deange.githubstatus.gcm;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,8 +24,7 @@ import com.deange.githubstatus.BuildConfig;
 import com.deange.githubstatus.Utils;
 
 /**
- * Helper class providing methods and constants common to other classes in the
- * app.
+ * Helper class providing methods and constants common to other classes in the app.
  */
 public final class GCMUtils {
 
@@ -35,7 +33,7 @@ public final class GCMUtils {
     public static final String RELEASE_SERVER_URL = "http://githubstatus.appspot.com";
 
     public static final String SENDER_ID = BuildConfig.SENDER_ID;
-    public static final String SERVER_URL = BuildConfig.SERVER_URL;
+    public static final String SERVER_URL = RELEASE_SERVER_URL; // BuildConfig.SERVER_URL;
     public static final String EXTRA_MESSAGE = Utils.buildAction("message");
     public static final String EXTRA_BUNDLE = Utils.buildAction("bundle");
 

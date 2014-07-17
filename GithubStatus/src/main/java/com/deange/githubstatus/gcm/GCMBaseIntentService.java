@@ -31,39 +31,25 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Skeleton for application-specific {@link android.app.IntentService}s responsible for
- * handling communication from Google Cloud Messaging service.
- * <p>
- * The abstract methods in this class are called from its worker thread, and
- * hence should run in a limited amount of time. If they execute long
- * operations, they should spawn new threads, otherwise the worker thread will
- * be blocked.
- * <p>
- * Subclasses must provide a public no-arg constructor.
- */
 public abstract class GCMBaseIntentService
         extends IntentService {
 
     public static final String TAG = GCMBaseIntentService.class.getSimpleName();
-
     private static final String WAKELOCK_KEY = Utils.buildAction("GCM_LIB");
     private static final Object sLock = GCMBaseIntentService.class;
-    private static PowerManager.WakeLock sWakeLock;
-
-    private final String[] mSenderIds;
-
-    private static final AtomicInteger sCounter = new AtomicInteger();
-    private static final int MAX_BACKOFF_MS = (int) TimeUnit.SECONDS.toMillis(3600); // 1 hour
-
-    // token used to check intent origin
     private static final Random sRandom = new Random();
     private static final String TOKEN = Long.toBinaryString(sRandom.nextLong());
     private static final String EXTRA_TOKEN = "token";
 
+    private static final AtomicInteger sCounter = new AtomicInteger();
+    private static final int MAX_BACKOFF_MS = (int) TimeUnit.SECONDS.toMillis(3600);
+
+    private static PowerManager.WakeLock sWakeLock;
+
+    private final String[] mSenderIds;
+
     /**
-     * Constructor that does not set a sender id, useful when the sender id
-     * is context-specific.
+     * Constructor that does not set a sender id, useful when the sender id is context-specific.
      * <p>
      * When using this constructor, the subclass <strong>must</strong>
      * override {@link #getSenderIds(android.content.Context)}, otherwise methods such as
@@ -77,35 +63,27 @@ public abstract class GCMBaseIntentService
     /**
      * Constructor used when the sender id(s) is fixed.
      */
-    protected GCMBaseIntentService(String... senderIds) {
+    protected GCMBaseIntentService(final String... senderIds) {
         this(getName(senderIds), senderIds);
     }
 
-    private GCMBaseIntentService(String name, String[] senderIds) {
+    private GCMBaseIntentService(final String name, final String[] senderIds) {
         super(name);  // name is used as base name for threads, etc.
         mSenderIds = senderIds;
     }
 
-    private static String getName(String senderId) {
-        String name = "GCMIntentService-" + senderId + "-" + (sCounter.getAndIncrement());
+    private static String getName(final String senderId) {
+        final String name = "GCMIntentService-" + senderId + "-" + (sCounter.getAndIncrement());
         Log.v(TAG, "Intent service name: " + name);
         return name;
     }
 
-    private static String getName(String[] senderIds) {
-        String flatSenderIds = GCMRegistrar.getFlatSenderIds(senderIds);
+    private static String getName(final String[] senderIds) {
+        final String flatSenderIds = GCMRegistrar.getFlatSenderIds(senderIds);
         return getName(flatSenderIds);
     }
 
-    /**
-     * Gets the sender ids.
-     *
-     * <p>By default, it returns the sender ids passed in the constructor, but
-     * it could be overridden to provide a dynamic sender id.
-     *
-     * @throws IllegalStateException if sender id was not set on constructor.
-     */
-    protected String[] getSenderIds(Context context) {
+    protected String[] getSenderIds(final Context context) {
         if (mSenderIds == null) {
             throw new IllegalStateException("sender id not set on constructor");
         }
@@ -118,7 +96,7 @@ public abstract class GCMBaseIntentService
      * @param context application's context.
      * @param intent intent containing the message payload as extras.
      */
-    protected abstract void onMessage(Context context, Intent intent);
+    protected abstract void onMessage(final Context context, final Intent intent);
 
     /**
      * Called when the GCM server tells pending messages have been deleted
@@ -127,7 +105,7 @@ public abstract class GCMBaseIntentService
      * @param context application's context.
      * @param total total number of collapsed messages
      */
-    protected void onDeletedMessages(Context context, int total) {
+    protected void onDeletedMessages(final Context context, final int total) {
     }
 
     /**
@@ -142,7 +120,7 @@ public abstract class GCMBaseIntentService
      * @return if {@literal true}, failed operation will be retried (using
      *         exponential backoff).
      */
-    protected boolean onRecoverableError(Context context, String errorId) {
+    protected boolean onRecoverableError(final Context context, final String errorId) {
         return true;
     }
 
@@ -152,7 +130,7 @@ public abstract class GCMBaseIntentService
      * @param context application's context.
      * @param errorId error id returned by the GCM service.
      */
-    protected abstract void onError(Context context, String errorId);
+    protected abstract void onError(final Context context, final String errorId);
 
     /**
      * Called after a device has been registered.
@@ -160,7 +138,7 @@ public abstract class GCMBaseIntentService
      * @param context application's context.
      * @param registrationId the registration id returned by the GCM service.
      */
-    protected abstract void onRegistered(Context context, String registrationId);
+    protected abstract void onRegistered(final Context context, final String registrationId);
 
     /**
      * Called after a device has been unregistered.
@@ -168,18 +146,19 @@ public abstract class GCMBaseIntentService
      * @param registrationId the registration id that was previously registered.
      * @param context application's context.
      */
-    protected abstract void onUnregistered(Context context, String registrationId);
+    protected abstract void onUnregistered(final Context context, final String registrationId);
 
     @Override
     public final void onHandleIntent(Intent intent) {
         try {
-            Context context = getApplicationContext();
-            String action = intent.getAction();
+            final Context context = getApplicationContext();
+            final String action = intent.getAction();
 
             if (action == null) {
-                // Nothing to do here
+                return;
+            }
 
-            } else if (action.equals(GCMConstants.INTENT_FROM_GCM_REGISTRATION_CALLBACK)) {
+            if (action.equals(GCMConstants.INTENT_FROM_GCM_REGISTRATION_CALLBACK)) {
                 GCMRegistrar.setRetryBroadcastReceiver(context);
                 handleRegistration(context, intent);
 
@@ -212,8 +191,7 @@ public abstract class GCMBaseIntentService
             } else if (action.equals(GCMConstants.INTENT_FROM_GCM_LIBRARY_RETRY)) {
                 String token = intent.getStringExtra(EXTRA_TOKEN);
                 if (!TOKEN.equals(token)) {
-                    // make sure intent was generated by this class, not by a
-                    // malicious app.
+                    // make sure intent was generated by this class, not by a malicious app.
                     Log.e(TAG, "Received invalid token: " + token);
                     return;
                 }
@@ -230,13 +208,8 @@ public abstract class GCMBaseIntentService
 
         } finally {
             // Release the power lock, so phone can get back to sleep.
-            // The lock is reference-counted by default, so multiple
-            // messages are ok.
-
-            // If onMessage() needs to spawn a thread or do something else,
-            // it should use its own lock.
+            // The lock is reference-counted by default, so multiple messages are ok.
             synchronized (sLock) {
-                // sanity check for null as this is a public method
                 if (sWakeLock != null) {
                     Log.v(TAG, "Releasing wakelock");
                     sWakeLock.release();
@@ -250,19 +223,12 @@ public abstract class GCMBaseIntentService
         }
     }
 
-    /**
-     * Called from the broadcast receiver.
-     * <p>
-     * Will process the received intent, call handleMessage(), registered(),
-     * etc. in background threads, with a wake lock, while keeping the service
-     * alive.
-     */
     static void runIntentInService(Context context, Intent intent, String className) {
 
         synchronized (sLock) {
             if (sWakeLock == null) {
-                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                sWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_KEY);
+                sWakeLock = ((PowerManager) context.getSystemService(Context.POWER_SERVICE))
+                        .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_KEY);
             }
         }
 
@@ -273,9 +239,9 @@ public abstract class GCMBaseIntentService
     }
 
     private void handleRegistration(final Context context, Intent intent) {
-        String registrationId = intent.getStringExtra(GCMConstants.EXTRA_REGISTRATION_ID);
-        String error = intent.getStringExtra(GCMConstants.EXTRA_ERROR);
-        String unregistered = intent.getStringExtra(GCMConstants.EXTRA_UNREGISTERED);
+        final String error = intent.getStringExtra(GCMConstants.EXTRA_ERROR);
+        final String registrationId = intent.getStringExtra(GCMConstants.EXTRA_REGISTRATION_ID);
+        final String unregistered = intent.getStringExtra(GCMConstants.EXTRA_UNREGISTERED);
         Log.d(TAG, "handleRegistration: registrationId = " + registrationId +
                 ", error = " + error + ", unregistered = " + unregistered);
 
@@ -291,7 +257,7 @@ public abstract class GCMBaseIntentService
         if (unregistered != null) {
             // Remember we are unregistered
             GCMRegistrar.resetBackoff(context);
-            String oldRegistrationId = GCMRegistrar.clearRegistrationId(context);
+            final String oldRegistrationId = GCMRegistrar.clearRegistrationId(context);
             onUnregistered(context, oldRegistrationId);
             return;
         }
@@ -301,23 +267,24 @@ public abstract class GCMBaseIntentService
 
         // Registration failed
         if (GCMConstants.ERROR_SERVICE_NOT_AVAILABLE.equals(error)) {
-            boolean retry = onRecoverableError(context, error);
+            final boolean retry = onRecoverableError(context, error);
             if (retry) {
 
-                int backoffTimeMs = GCMRegistrar.getBackoff(context);
-                int nextAttempt = backoffTimeMs / 2 + sRandom.nextInt(backoffTimeMs);
+                final int backoffTimeMs = GCMRegistrar.getBackoff(context);
+                final int nextAttempt = backoffTimeMs / 2 + sRandom.nextInt(backoffTimeMs);
                 Log.d(TAG, "Scheduling registration retry, backoff = " + nextAttempt + " (" + backoffTimeMs + ")");
 
-                Intent retryIntent = new Intent(GCMConstants.INTENT_FROM_GCM_LIBRARY_RETRY);
+                final Intent retryIntent = new Intent(GCMConstants.INTENT_FROM_GCM_LIBRARY_RETRY);
                 retryIntent.putExtra(EXTRA_TOKEN, TOKEN);
                 PendingIntent retryPendingIntent = PendingIntent.getBroadcast(context, 0, retryIntent, 0);
 
-                AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                am.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + nextAttempt, retryPendingIntent);
+                ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE))
+                        .set(AlarmManager.ELAPSED_REALTIME,
+                        SystemClock.elapsedRealtime() + nextAttempt, retryPendingIntent);
 
                 // Next retry should wait longer.
                 if (backoffTimeMs < MAX_BACKOFF_MS) {
-                  GCMRegistrar.setBackoff(context, backoffTimeMs * 2);
+                    GCMRegistrar.setBackoff(context, backoffTimeMs * 2);
                 }
 
             } else {

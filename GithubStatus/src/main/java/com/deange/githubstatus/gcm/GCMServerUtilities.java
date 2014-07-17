@@ -41,7 +41,7 @@ public final class GCMServerUtilities {
 
     private static final int MAX_ATTEMPTS = 5;
     private static final int BACKOFF_MILLI_SECONDS = 500;
-    private static final Random random = new Random();
+    private static final Random sRandom = new Random();
 
     /**
      * Register this account/device pair within the server.
@@ -57,7 +57,7 @@ public final class GCMServerUtilities {
 
         Log.v(TAG, "Registering at '" + serverUrl + "'");
 
-        long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
+        long backoff = BACKOFF_MILLI_SECONDS + sRandom.nextInt(1000);
 
         // Once GCM returns a registration id, we need to register it in the
         // demo server. As the server might be down, we will retry it a couple times.
@@ -119,8 +119,7 @@ public final class GCMServerUtilities {
         try {
             post(serverUrl, params);
             GCMRegistrar.setRegisteredOnServer(context, false);
-            final String message = context.getString(R.string.server_unregistered);
-            GCMUtils.displayMessage(context, message);
+            GCMUtils.displayMessage(context, context.getString(R.string.server_unregistered));
 
         } catch (IOException e) {
             // At this point the device is unregistered from GCM, but still
@@ -186,7 +185,7 @@ public final class GCMServerUtilities {
 
             // handle the response
             final int status = conn.getResponseCode();
-            if (status != HttpURLConnection.HTTP_OK) {
+            if (status < 200 || status > 299) {
                 throw new HttpIOException("Post failed with error code " + status, status);
             }
 

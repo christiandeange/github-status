@@ -27,9 +27,6 @@ import com.deange.githubstatus.model.Status;
 
 import java.io.IOException;
 
-/**
- * IntentService responsible for handling GCM messages.
- */
 public class GCMIntentService
         extends GCMBaseIntentService
         implements OnGCMMessageReceivedListener {
@@ -41,7 +38,7 @@ public class GCMIntentService
     }
 
     @Override
-    protected void onRegistered(Context context, String registrationId) {
+    protected void onRegistered(final Context context, final String registrationId) {
         Log.i(TAG, "Device registered: regId = " + registrationId);
 
         GCMUtils.displayMessage(context, getString(R.string.gcm_registered));
@@ -49,7 +46,7 @@ public class GCMIntentService
     }
 
     @Override
-    protected void onUnregistered(Context context, String registrationId) {
+    protected void onUnregistered(final Context context, final String registrationId) {
         Log.i(TAG, "Device unregistered");
 
         GCMUtils.displayMessage(context, getString(R.string.gcm_unregistered));
@@ -65,21 +62,18 @@ public class GCMIntentService
     }
 
     @Override
-    protected void onMessage(Context context, Intent intent) {
+    protected void onMessage(final Context context, final Intent intent) {
         Log.i(TAG, "Received message");
 
-        String message = getString(R.string.gcm_message);
+        final String message = getString(R.string.gcm_message);
         GCMUtils.displayMessage(context, message);
 
-        // Notify other classes
         GCMUtils.onGcmMessageReceived(context, intent.getExtras());
-
-        // Notify ourselves
         onGcmMessageReceived(intent);
     }
 
     @Override
-    protected void onDeletedMessages(Context context, int total) {
+    protected void onDeletedMessages(final Context context, final int total) {
         Log.i(TAG, "Received deleted messages notification");
 
         GCMUtils.displayMessage(context, getString(R.string.gcm_deleted, total));
@@ -87,14 +81,14 @@ public class GCMIntentService
     }
 
     @Override
-    public void onError(Context context, String errorId) {
+    public void onError(final Context context, final String errorId) {
         Log.i(TAG, "Received error: " + errorId);
 
         GCMUtils.displayMessage(context, getString(R.string.gcm_error, errorId));
     }
 
     @Override
-    protected boolean onRecoverableError(Context context, String errorId) {
+    protected boolean onRecoverableError(final Context context, final String errorId) {
         Log.i(TAG, "Received recoverable error: " + errorId);
 
         GCMUtils.displayMessage(context, getString(R.string.gcm_recoverable_error, errorId));
@@ -108,7 +102,7 @@ public class GCMIntentService
         try {
             newStatus = GithubApi.getStatus(getApplicationContext());
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // Cannot retrieve new status information
             return;
         }
