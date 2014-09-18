@@ -61,23 +61,13 @@ public final class Utils {
     }
 
 
-    public static String getVersionName(final Context context) {
-
-        String versionName = null;
-
-        try {
-            versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-        } catch (final PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return versionName;
+    public static String getVersionName() {
+        return BuildConfig.VERSION_NAME;
     }
 
     public static int getVersionCode() {
         return BuildConfig.VERSION_CODE;
     }
-
 
     public static String buildAction(final String action) {
         return BuildConfig.PACKAGE_NAME + "." + action;

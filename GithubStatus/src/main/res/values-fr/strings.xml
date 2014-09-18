@@ -16,8 +16,11 @@
     <string name="status_major">Majeur</string>
 
     <string name="github_title_text">GitHub est actuellement</string>
-    <string name="info_menu">Infos</string>
-    <string name="info_sync">Recharger</string>
+    <string name="menu_info">Infos</string>
+    <string name="menu_refresh">Recharger</string>
     <string name="about_disclaimer">Cette application n\'est pas affilié à github.com</string>
+
+    <string name="settings_push_notifications">Server push</string>
+    <string name="settings_push_notifications_description">Recevez des alertes lorsque les changements d\'état de GitHub.</string>
 
 </resources>

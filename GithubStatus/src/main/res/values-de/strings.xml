@@ -16,8 +16,11 @@
     <string name="status_major">Bedeutend</string>
 
     <string name="github_title_text">GitHub ist derzeit</string>
-    <string name="info_menu">Info</string>
-    <string name="info_sync">Aktualisieren</string>
+    <string name="menu_info">Info</string>
+    <string name="menu_refresh">Aktualisieren</string>
     <string name="about_disclaimer">Diese App ist nicht mit dem Unternehmen assoziiert github.com</string>
+
+    <string name="settings_push_notifications">Push-Medien</string>
+    <string name="settings_push_notifications_description">Erhalten Sie Benachrichtigungen, wenn GitHub\'s Statusänderungen.</string>
 
 </resources>

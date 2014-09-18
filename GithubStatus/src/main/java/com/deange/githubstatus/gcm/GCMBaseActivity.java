@@ -41,6 +41,19 @@ public abstract class GCMBaseActivity
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        registerIfNecessary();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mNeedToCheckPlayServices) {
+            checkPlayServices();
+        }
+    }
+
+    protected void registerIfNecessary() {
         GCMRegistrar.checkDevice(this);
         GCMRegistrar.checkManifest(this);
 
@@ -66,8 +79,8 @@ public abstract class GCMBaseActivity
                 mRegisterTask = new AsyncTask<Void, Void, Void>() {
 
                     @Override
-                    protected Void doInBackground(Void... params) {
-                        boolean registered = GCMServerUtilities.register(context, regId);
+                    protected Void doInBackground(final Void... params) {
+                        final boolean registered = GCMServerUtilities.register(context, regId);
                         if (!registered) {
                             GCMRegistrar.unregister(context);
                         }
@@ -75,7 +88,7 @@ public abstract class GCMBaseActivity
                     }
 
                     @Override
-                    protected void onPostExecute(Void result) {
+                    protected void onPostExecute(final Void result) {
                         mRegisterTask = null;
                     }
 
@@ -85,16 +98,21 @@ public abstract class GCMBaseActivity
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    protected void unregisterIfNecessary() {
+        GCMRegistrar.checkDevice(this);
+        GCMRegistrar.checkManifest(this);
 
-        if (mNeedToCheckPlayServices) {
-            checkPlayServices();
+        final String regId = GCMRegistrar.getRegistrationId(this);
+        if (!regId.isEmpty()) {
+            // Device is already registered on GCM, check server.
+            if (GCMRegistrar.isRegisteredOnServer(this)) {
+                // Device is registered on server, unregister them
+                GCMRegistrar.unregister(this);
+            }
         }
     }
 
-    private boolean checkPlayServices() {
+    protected boolean checkPlayServices() {
 
         mNeedToCheckPlayServices = false;
         final int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
@@ -131,7 +149,7 @@ public abstract class GCMBaseActivity
         }
 
         GCMUtils.unregisterForGcmMessages(this, mHandleGcmMessageReceiver);
-        GCMRegistrar.onDestroy(this);
+//        GCMRegistrar.onDestroy(this);
         super.onDestroy();
     }
 

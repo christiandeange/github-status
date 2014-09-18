@@ -4,19 +4,22 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
 import com.deange.githubstatus.gcm.GCMBaseActivity;
+import com.deange.githubstatus.model.SettingsFragment;
 
 import java.util.Calendar;
 
 public class MainActivity
         extends GCMBaseActivity
-        implements View.OnClickListener {
+        implements View.OnClickListener, SettingsFragment.OnSettingsChangedListener {
 
     private MainFragment mFragment;
     private AlertDialog mDialog;
@@ -40,15 +43,15 @@ public class MainActivity
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        if (mDialog != null && mDialog.isShowing()) {
-            mDialog.cancel();
-            mDialog = null;
-        }
-
-        super.onDestroy();
-    }
+//    @Override
+//    protected void onDestroy() {
+//        if (mDialog != null && mDialog.isShowing()) {
+//            mDialog.cancel();
+//            mDialog = null;
+//        }
+//
+//        super.onDestroy();
+//    }
 
     private void showInfoDialog() {
 
@@ -62,6 +65,19 @@ public class MainActivity
                 .show();
     }
 
+    private void showSettings() {
+        final String tag = SettingsFragment.TAG;
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        SettingsFragment fragment =
+                (SettingsFragment) getSupportFragmentManager().findFragmentByTag(tag);
+        if (fragment != null) {
+            transaction.remove(fragment);
+        }
+
+        fragment = new SettingsFragment();
+        fragment.show(transaction, tag);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_menu, menu);
@@ -72,13 +88,16 @@ public class MainActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+            case R.id.menu_sync:
+                refresh();
+                return true;
+
+            case R.id.menu_settings:
+                showSettings();
+                return true;
 
             case R.id.menu_info:
                 showInfoDialog();
-                return true;
-
-            case R.id.menu_sync:
-                refresh();
                 return true;
 
             default:
@@ -106,6 +125,18 @@ public class MainActivity
             case R.id.dialog_about_avatar:
                 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(AVATAR_URL)));
                 break;
+        }
+    }
+
+    @Override
+    public void onSettingsChanged(final SettingsInfo settings) {
+        if (settings.gcmEnabled) {
+            // User is enabling push notifications
+            registerIfNecessary();
+
+        } else {
+            // User is disabling push notifications
+            unregisterIfNecessary();
         }
     }
 }

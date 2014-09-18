@@ -193,7 +193,7 @@ public final class GCMRegistrar {
         return builder.toString();
     }
 
-    public static void unregister(Context context) {
+    public static void unregister(final Context context) {
         GCMRegistrar.resetBackoff(context);
         internalUnregister(context);
     }
