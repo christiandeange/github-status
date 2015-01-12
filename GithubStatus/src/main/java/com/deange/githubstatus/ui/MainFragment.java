@@ -1,7 +1,5 @@
 package com.deange.githubstatus.ui;
 
-import android.animation.LayoutTransition;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -16,11 +14,10 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.content.GsonController;
+import com.deange.githubstatus.GsonController;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;
 import com.deange.githubstatus.model.Status;
-import com.deange.githubstatus.ui.view.AutoScaleTextView;
 
 import java.util.ArrayList;
 import java.util.List;

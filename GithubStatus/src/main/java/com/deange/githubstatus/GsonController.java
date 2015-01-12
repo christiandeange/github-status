@@ -1,4 +1,4 @@
-package com.deange.githubstatus.content;
+package com.deange.githubstatus;
 
 import com.google.gson.Gson;
 

@@ -21,12 +21,6 @@
             </intent-filter>
         </activity>
 
-        <provider
-                android:name=".content.DatabaseProvider"
-                android:authorities="@string/gs_authority_content"
-                android:exported="false"
-                android:syncable="false"/>
-
     </application>
 
 </manifest>
