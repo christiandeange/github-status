@@ -85,11 +85,7 @@ public class MainFragment
 
         mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_swipe_container);
         mSwipeLayout.setOnRefreshListener(this);
-        mSwipeLayout.setColorScheme(
-                R.color.status_good,
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_orange_dark);
+        mSwipeLayout.setColorSchemeResources(R.color.status_good);
 
         mListView = (ListView) view.findViewById(R.id.fragment_messages_list_view);
         mListView.setDivider(null);
