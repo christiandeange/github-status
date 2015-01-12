@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.model.Status;
+import com.deange.githubstatus.Status;
 
 import java.util.List;
 

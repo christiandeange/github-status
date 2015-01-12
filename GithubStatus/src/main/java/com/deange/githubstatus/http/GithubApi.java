@@ -3,7 +3,7 @@ package com.deange.githubstatus.http;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.deange.githubstatus.model.Status;
+import com.deange.githubstatus.Status;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;

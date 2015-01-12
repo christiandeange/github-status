@@ -17,7 +17,7 @@ import com.deange.githubstatus.R;
 import com.deange.githubstatus.GsonController;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;
-import com.deange.githubstatus.model.Status;
+import com.deange.githubstatus.Status;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.deange.githubstatus.R;
 import com.deange.githubstatus.http.GithubApi;
-import com.deange.githubstatus.model.Status;
+import com.deange.githubstatus.Status;
 
 public final class ViewUtils {
 

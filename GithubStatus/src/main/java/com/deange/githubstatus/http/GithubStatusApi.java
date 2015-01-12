@@ -2,7 +2,7 @@ package com.deange.githubstatus.http;
 
 import android.content.Context;
 
-import com.deange.githubstatus.model.Status;
+import com.deange.githubstatus.Status;
 
 public class GithubStatusApi extends SimpleApi<Status> {
 

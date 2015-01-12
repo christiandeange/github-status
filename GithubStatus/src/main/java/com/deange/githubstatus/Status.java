@@ -1,32 +1,29 @@
-package com.deange.githubstatus.model;
+package com.deange.githubstatus;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.text.format.Time;
 
-import com.deange.githubstatus.R;
-import com.deange.githubstatus.Utils;
 import com.deange.githubstatus.http.GithubApi;
 import com.google.gson.annotations.SerializedName;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@DatabaseTable(tableName = "status")
-public class Status extends BaseModel {
+public class Status {
 
     public static final String STATUS = "status";
     public static final String BODY = "body";
     public static final String CREATED_ON = "created_on";
-    public static final String VERSION = "version";
 
-    private static final Map<String, Integer> mStatusMap = new HashMap<String, Integer>();
+    private static final Map<String, Integer> mStatusMap;
     static {
-        mStatusMap.put(GithubApi.STATUS_GOOD, R.string.status_good);
-        mStatusMap.put(GithubApi.STATUS_MINOR, R.string.status_minor);
-        mStatusMap.put(GithubApi.STATUS_MAJOR, R.string.status_major);
+        final Map<String, Integer> map = new HashMap<>();
+        map.put(GithubApi.STATUS_GOOD, R.string.status_good);
+        map.put(GithubApi.STATUS_MINOR, R.string.status_minor);
+        map.put(GithubApi.STATUS_MAJOR, R.string.status_major);
+        mStatusMap = Collections.unmodifiableMap(map);
     }
 
     public enum SpecialType {
@@ -41,9 +38,6 @@ public class Status extends BaseModel {
 
     @SerializedName(CREATED_ON)
     private String mCreatedOn;
-
-    @DatabaseField(columnName = VERSION)
-    private String mVersion;
 
     public static Status getSpecialStatus(final Context context, final SpecialType type) {
 
@@ -109,15 +103,6 @@ public class Status extends BaseModel {
         }
     }
 
-    public String getVersion() {
-        return mVersion;
-    }
-
-    public void calculateVersion() {
-        final String unhashedVersion = mId + mStatus + mBody + mCreatedOn;
-        mVersion = Utils.hash(unhashedVersion);
-    }
-
     private Status() {
         // Uninstantiable
     }
@@ -128,7 +113,6 @@ public class Status extends BaseModel {
                 "mStatus='" + mStatus + '\'' +
                 ", mBody='" + mBody + '\'' +
                 ", mCreatedOn='" + mCreatedOn + '\'' +
-                ", mVersion='" + mVersion + '\'' +
                 '}';
     }
 }
