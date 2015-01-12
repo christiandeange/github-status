@@ -4,8 +4,6 @@
     <string name="app_name">GitHub Status</string>
     <string name="action_settings">Settings</string>
 
-    <string name="gs_authority_content" translateable="false">com.deange.githubstatus</string>
-
     <string name="error_server_unavailable_status">Unavailable</string>
     <string name="error_server_unavailable_message">Something went wrong.</string>
     <string name="loading_status">Loading\u2026</string>

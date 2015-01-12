@@ -35,12 +35,6 @@
 
         </activity>
 
-        <provider
-                android:name=".content.DatabaseProvider"
-                android:authorities="@string/gs_authority_content"
-                android:exported="false"
-                android:syncable="false"/>
-
         <receiver
                 android:name=".gcm.GCMBroadcastReceiver"
                 android:permission="com.google.android.c2dm.permission.SEND" >

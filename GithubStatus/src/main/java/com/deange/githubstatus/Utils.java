@@ -70,6 +70,6 @@ public final class Utils {
     }
 
     public static String buildAction(final String action) {
-        return BuildConfig.PACKAGE_NAME + "." + action;
+        return BuildConfig.APPLICATION_ID + "." + action;
     }
 }

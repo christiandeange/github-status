@@ -1,7 +1,5 @@
 package com.deange.githubstatus.ui;
 
-import android.animation.LayoutTransition;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -15,13 +13,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.deange.githubstatus.GsonController;
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.controller.StateController;
-import com.deange.githubstatus.content.GsonController;
+import com.deange.githubstatus.model.Status;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;
-import com.deange.githubstatus.model.Status;
-import com.deange.githubstatus.ui.view.AutoScaleTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,11 +85,7 @@ public class MainFragment
 
         mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_swipe_container);
         mSwipeLayout.setOnRefreshListener(this);
-        mSwipeLayout.setColorScheme(
-                R.color.status_good,
-                android.R.color.holo_blue_bright,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_orange_dark);
+        mSwipeLayout.setColorSchemeResources(R.color.status_good);
 
         mListView = (ListView) view.findViewById(R.id.fragment_messages_list_view);
         mListView.setDivider(null);
