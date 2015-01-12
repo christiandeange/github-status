@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 
@@ -19,12 +19,12 @@ def buildVersion = 0;
 
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "20.0.0"
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 19
+        targetSdkVersion 21
 
         versionName "${majorVersion}.${minorVersion}" + (buildVersion == 0 ? "" : "${buildVersion}")
         versionCode ((majorVersion * 100) + (minorVersion * 10) + (buildVersion * 1))
