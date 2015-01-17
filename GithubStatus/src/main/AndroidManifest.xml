@@ -42,7 +42,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".push.SimplePushIntentService" />
+        <service android:name=".push.PushIntentService" />
 
     </application>
 

@@ -14,8 +14,7 @@ public class PushBroadcastReceiver extends WakefulBroadcastReceiver {
     public final void onReceive(final Context context, final Intent intent) {
         Log.v(TAG, "onReceive(): " + intent.getAction());
 
-        AbstractPushIntentService.runIntentInService(
-                context, intent, SimplePushIntentService.class.getName());
+        PushIntentService.runIntentInService(context, intent, PushIntentService.class.getName());
         setResult(Activity.RESULT_OK, null, null);
     }
 }

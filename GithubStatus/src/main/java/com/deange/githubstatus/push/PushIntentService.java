@@ -8,19 +8,16 @@ import android.util.Log;
 
 import com.deange.githubstatus.Utils;
 
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
+public class PushIntentService extends IntentService {
 
-public abstract class AbstractPushIntentService extends IntentService {
-
-    private static final String TAG = AbstractPushIntentService.class.getSimpleName();
+    private static final String TAG = PushIntentService.class.getSimpleName();
 
     private static final String WAKELOCK_KEY = Utils.buildAction("wakelock.key");
     private static final Object sLock = new Object();
 
     private static PowerManager.WakeLock sWakeLock;
 
-    public AbstractPushIntentService() {
+    public PushIntentService() {
         super(TAG);
     }
 
@@ -96,12 +93,20 @@ public abstract class AbstractPushIntentService extends IntentService {
 
     }
 
-    public abstract void onRegistered(final Context context, final String registrationId);
+    public void onRegistered(final Context context, final String registrationId) {
 
-    public abstract void onUnregistered(final Context context, final String oldRegistrationId);
+    }
 
-    public abstract void onMessage(final Context context, final Intent intent, final String type);
+    public void onUnregistered(final Context context, final String oldRegistrationId) {
 
-    public abstract void onError(final Context context, final String error);
+    }
+
+    public void onMessage(final Context context, final Intent intent, final String type) {
+
+    }
+
+    public void onError(final Context context, final String error) {
+
+    }
 
 }
