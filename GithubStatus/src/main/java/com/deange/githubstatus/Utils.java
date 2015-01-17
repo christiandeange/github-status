@@ -72,4 +72,8 @@ public final class Utils {
     public static String buildAction(final String action) {
         return BuildConfig.APPLICATION_ID + "." + action;
     }
+
+    public static String buildPreferences(final String name) {
+        return BuildConfig.APPLICATION_ID + "." + "prefs" + "." + name;
+    }
 }

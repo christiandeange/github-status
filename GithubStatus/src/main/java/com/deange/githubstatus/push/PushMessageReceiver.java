@@ -1,25 +1,21 @@
-package com.deange.githubstatus.gcm;
+package com.deange.githubstatus.push;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class GCMMessageReceiver
+public class PushMessageReceiver
     extends BroadcastReceiver {
 
-    private static final String TAG = GCMMessageReceiver.class.getSimpleName();
+    private static final String TAG = PushMessageReceiver.class.getSimpleName();
 
-    private final OnGCMMessageReceivedListener mListener;
+    private final OnPushMessageReceivedListener mListener;
     private final String mAction;
 
-    public GCMMessageReceiver(final OnGCMMessageReceivedListener listener) {
-        this(listener, GCMUtils.ACTION_GCM_MESSAGE_RECEIVED);
-    }
-
-    public GCMMessageReceiver(final OnGCMMessageReceivedListener listener, final String action) {
+    public PushMessageReceiver(final OnPushMessageReceivedListener listener) {
         mListener = listener;
-        mAction = action;
+        mAction = PushUtils.ACTION_GCM_MESSAGE_RECEIVED;
     }
 
     public String getAction() {
@@ -37,7 +33,7 @@ public class GCMMessageReceiver
             Log.v(TAG, "mListener is null!");
 
         } else {
-            mListener.onGcmMessageReceived(intent);
+            mListener.onPushMessageReceived(intent);
         }
     }
 }

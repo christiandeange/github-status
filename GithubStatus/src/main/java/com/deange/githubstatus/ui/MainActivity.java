@@ -11,13 +11,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.gcm.GCMBaseActivity;
 import com.deange.githubstatus.model.SettingsFragment;
+import com.deange.githubstatus.push.PushBaseActivity;
 
 import java.util.Calendar;
 
 public class MainActivity
-        extends GCMBaseActivity
+        extends PushBaseActivity
         implements View.OnClickListener, SettingsFragment.OnSettingsChangedListener {
 
     private MainFragment mFragment;
@@ -112,7 +112,7 @@ public class MainActivity
     }
 
     @Override
-    public void onGcmMessageReceived(final Intent intent) {
+    public void onPushMessageReceived(final Intent intent) {
         // Reload the fragment's content view
         refresh();
     }
@@ -129,7 +129,7 @@ public class MainActivity
 
     @Override
     public void onSettingsChanged(final SettingsInfo settings) {
-        if (settings.gcmEnabled) {
+        if (settings.isGCMEnabled()) {
             // User is enabling push notifications
             registerIfNecessary();
 

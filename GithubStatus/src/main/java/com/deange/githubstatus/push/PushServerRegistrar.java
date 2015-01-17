@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.deange.githubstatus.gcm;
+package com.deange.githubstatus.push;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Looper;
 import android.util.Log;
 
-import com.deange.githubstatus.R;
+import com.deange.githubstatus.Utils;
 import com.deange.githubstatus.http.HttpIOException;
 
 import java.io.IOException;
@@ -26,122 +28,80 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Helper class used to communicate with the demo server.
- */
-public final class GCMServerUtilities {
+public final class PushServerRegistrar {
 
-    private static final String TAG = GCMServerUtilities.class.getSimpleName();
-
-    private static final int MAX_ATTEMPTS = 5;
-    private static final int BACKOFF_MILLI_SECONDS = 500;
-    private static final Random sRandom = new Random();
-
+    private static final String TAG = PushServerRegistrar.class.getSimpleName();
     /**
-     * Register this account/device pair within the server.
-     *
-     * @return whether the registration succeeded or not.
+     * Default lifespan (7 days) of the {@link PushServerRegistrar#isRegisteredOnServer(Context)}
+     * flag until it is considered expired.
      */
-    static boolean register(final Context context, final String regId) {
+    public static final long DEFAULT_ON_SERVER_LIFESPAN_MS = TimeUnit.DAYS.toMillis(7);
+
+    private static final String PREFERENCES = Utils.buildPreferences("server.registrar");
+    private static final String PROPERTY_ON_SERVER = "onServer";
+    private static final String PROPERTY_ON_SERVER_EXPIRATION_TIME = "onServerExpirationTime";
+
+    private static final String RELEASE_SERVER_URL = "http://githubstatus.appspot.com";
+    private static final String SERVER_URL = RELEASE_SERVER_URL; // BuildConfig.SERVER_URL;
+    private static final int MAX_ATTEMPTS = 5;
+
+    static void register(final Context context, final String regId) {
+        register(context, regId, false);
+    }
+
+    static void register(final Context context, final String regId, final boolean async) {
         Log.i(TAG, "registering device (regId = " + regId + ")");
 
-        final String serverUrl = GCMUtils.SERVER_URL + "/register";
+        final String serverUrl = SERVER_URL + "/register";
         final Map<String, String> params = new HashMap<>();
-        params.put("regId", regId);
+        params.put("id", regId);
 
         Log.v(TAG, "Registering at '" + serverUrl + "'");
 
-        long backoff = BACKOFF_MILLI_SECONDS + sRandom.nextInt(1000);
-
-        // Once GCM returns a registration id, we need to register it in the
-        // demo server. As the server might be down, we will retry it a couple times.
-        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            Log.d(TAG, "Attempt #" + i + " to register");
-
-            try {
-
-                GCMUtils.displayMessage(context, context.getString(
-                        R.string.server_registering, i, MAX_ATTEMPTS));
+        final BackoffHandler task = new BackoffHandler(MAX_ATTEMPTS, async) {
+            @Override
+            public boolean performAction() throws Throwable {
                 post(serverUrl, params);
-                GCMRegistrar.setRegisteredOnServer(context, true);
-
-                final String message = context.getString(R.string.server_registered);
-                GCMUtils.displayMessage(context, message);
-
                 return true;
-
-            } catch (final HttpIOException e) {
-
-                if ((e.isServerError()) && (i != MAX_ATTEMPTS)) {
-                    try {
-                        Log.d(TAG, "Sleeping for " + backoff + " ms before retry");
-                        Thread.sleep(backoff);
-
-                    } catch (final InterruptedException e1) {
-                        // Activity finished before we complete - exit.
-                        Log.d(TAG, "Thread interrupted: abort remaining retries!");
-                        Thread.currentThread().interrupt();
-                        return false;
-                    }
-
-                    // increase backoff exponentially
-                    backoff *= 2;
-                }
-
-            } catch (final IOException e) {
-                Log.e(TAG, "Failed to register on attempt " + i, e);
             }
 
-        }
+            @Override
+            public void onActionCompleted(final boolean success) {
+                setRegisteredOnServer(context, success);
+            }
+        };
 
-        final String message = context.getString(R.string.server_register_error, MAX_ATTEMPTS);
-        GCMUtils.displayMessage(context, message);
-
-        return false;
+        task.start();
     }
 
-    /**
-     * Unregister this account/device pair within the server.
-     */
     static void unregister(final Context context, final String regId) {
         Log.i(TAG, "unregistering device (regId = " + regId + ")");
 
-        final String serverUrl = GCMUtils.SERVER_URL + "/unregister";
+        final String serverUrl = SERVER_URL + "/unregister";
         final Map<String, String> params = new HashMap<>();
-        params.put("regId", regId);
+        params.put("id", regId);
 
         try {
             post(serverUrl, params);
-            GCMRegistrar.setRegisteredOnServer(context, false);
-            GCMUtils.displayMessage(context, context.getString(R.string.server_unregistered));
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // At this point the device is unregistered from GCM, but still
             // registered in the server.
             // We could try to unregister again, but it is not necessary:
             // if the server tries to send a message to the device, it will get
             // a "NotRegistered" error message and should unregister the device.
-            final String message = context.getString(R.string.server_unregister_error,
-                    e.getMessage());
-            GCMUtils.displayMessage(context, message);
+        } finally {
+            setRegisteredOnServer(context, false);
         }
-
     }
 
-    /**
-     * Issue a POST request to the server.
-     *
-     * @param endpoint POST address.
-     * @param params request parameters.
-     *
-     * @throws java.io.IOException propagated from POST.
-     */
     private static void post(final String endpoint, final Map<String, String> params)
             throws IOException {
 
@@ -195,5 +155,40 @@ public final class GCMServerUtilities {
             }
         }
 
+    }
+
+    public static boolean isRegisteredOnServer(final Context context) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        final boolean isRegistered = prefs.getBoolean(PROPERTY_ON_SERVER, false);
+        Log.v(TAG, "Is registered on server: " + isRegistered);
+
+        if (isRegistered) {
+            // checks if the information is not stale
+            final long expirationTime = prefs.getLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, -1);
+            if (System.currentTimeMillis() > expirationTime) {
+                Log.v(TAG, "flag expired on: " + new Timestamp(expirationTime));
+                return false;
+            }
+        }
+
+        return isRegistered;
+    }
+
+    public static void setRegisteredOnServer(final Context context, final boolean flag) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        final long lifespan = DEFAULT_ON_SERVER_LIFESPAN_MS;
+        final long expirationTime = System.currentTimeMillis() + lifespan;
+        Log.v(TAG, "Setting registeredOnServer status as " + flag + " until "
+                + new Timestamp(expirationTime));
+
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(PROPERTY_ON_SERVER, flag);
+        editor.putLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
+        editor.apply();
+    }
+
+    private static SharedPreferences getGCMPreferences(final Context context) {
+        return context.getApplicationContext()
+                .getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
     }
 }

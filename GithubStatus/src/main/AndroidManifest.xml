@@ -31,12 +31,9 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".gcm.DemoActivity" >
-
-        </activity>
 
         <receiver
-                android:name=".gcm.GCMBroadcastReceiver"
+                android:name=".push.PushBroadcastReceiver"
                 android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -45,7 +42,8 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".gcm.GCMIntentService" />
+        <service android:name=".push.SimplePushIntentService" />
+
     </application>
 
 </manifest>

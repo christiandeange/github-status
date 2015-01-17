@@ -7,11 +7,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.gcm.GCMRegistrar;
+import com.deange.githubstatus.push.PushRegistrar;
+import com.deange.githubstatus.push.PushServerRegistrar;
 import com.deange.githubstatus.ui.SettingsInfo;
 
 public class SettingsFragment extends DialogFragment {
@@ -34,7 +34,7 @@ public class SettingsFragment extends DialogFragment {
         final View root = View.inflate(activity, R.layout.fragment_settings, null);
         final Switch gcmSwitch = (Switch) root.findViewById(R.id.setting_gcm_switch);
 
-        gcmSwitch.setChecked(GCMRegistrar.isRegisteredOnServer(activity));
+        gcmSwitch.setChecked(PushServerRegistrar.isRegisteredOnServer(activity));
 
         return new AlertDialog.Builder(activity)
                 .setView(root)
