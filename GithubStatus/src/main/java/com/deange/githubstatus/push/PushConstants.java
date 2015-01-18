@@ -26,17 +26,10 @@ public final class PushConstants {
     public static final String INTENT_REGISTRATION_CALLBACK = build("REGISTRATION");
     public static final String INTENT_MESSAGE = build("RECEIVE");
 
-    public static final String EXTRA_SENDER = "sender";
-    public static final String EXTRA_APPLICATION_PENDING_INTENT = "app";
     public static final String EXTRA_UNREGISTERED = "unregistered";
     public static final String EXTRA_ERROR = "error";
     public static final String EXTRA_REGISTRATION_ID = "registration_id";
     public static final String EXTRA_SPECIAL_MESSAGE = "message_type";
-
-    public static final String PERMISSION_GCM_INTENTS = C2DM_PACKAGE + ".permission.SEND";
-
-    public static final String ERROR_SERVICE_NOT_AVAILABLE =
-            "SERVICE_NOT_AVAILABLE";
 
     private static String build(final String name) {
         return C2DM_PACKAGE + "." + "intent" + "." + name;

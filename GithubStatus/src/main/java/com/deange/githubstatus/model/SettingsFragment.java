@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Switch;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.push.PushRegistrar;
 import com.deange.githubstatus.push.PushServerRegistrar;
 import com.deange.githubstatus.ui.SettingsInfo;
 

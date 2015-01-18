@@ -19,8 +19,6 @@ package com.deange.githubstatus.push;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 

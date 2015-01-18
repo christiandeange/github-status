@@ -17,7 +17,6 @@ package com.deange.githubstatus.push;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Looper;
 import android.util.Log;
 
 import com.deange.githubstatus.Utils;

@@ -49,7 +49,7 @@ public class PushIntentService extends IntentService {
         }
     }
 
-    public static void runIntentInService(final Context context, final Intent intent,
+    static void runIntentInService(final Context context, final Intent intent,
                                           final String className) {
         synchronized (sLock) {
             if (sWakeLock == null) {
