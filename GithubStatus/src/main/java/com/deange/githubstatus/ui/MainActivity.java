@@ -2,23 +2,20 @@ package com.deange.githubstatus.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.text.util.Linkify;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.Utils;
 
 import java.util.Calendar;
-import java.util.Locale;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
     private MainFragment mFragment;
     private AlertDialog mDialog;
@@ -29,7 +26,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getActionBar().setTitle(R.string.app_name);
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setTitle(R.string.app_name);
 
         mFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
         if (mFragment == null) {
