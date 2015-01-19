@@ -5,6 +5,9 @@
     <color name="status_minor">#FFF29D50</color>
     <color name="status_major">#FFCC3300</color>
 
+    <color name="primary">@color/status_good</color>
+    <color name="primary_dark">@color/status_good</color>
+
     <color name="fragment_messages_header">#FF123456</color>
 
 </resources>

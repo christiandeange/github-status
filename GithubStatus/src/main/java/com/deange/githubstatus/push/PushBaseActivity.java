@@ -19,13 +19,14 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public abstract class PushBaseActivity
-        extends FragmentActivity
+        extends ActionBarActivity
         implements OnPushMessageReceivedListener {
 
     private static final String TAG = PushBaseActivity.class.getSimpleName();
