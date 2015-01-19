@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
-import com.deange.githubstatus.model.SettingsFragment;
+import com.deange.githubstatus.model.SettingsInfo;
 import com.deange.githubstatus.push.PushBaseActivity;
 
 import java.util.Calendar;

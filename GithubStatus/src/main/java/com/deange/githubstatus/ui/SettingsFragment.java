@@ -1,4 +1,4 @@
-package com.deange.githubstatus.model;
+package com.deange.githubstatus.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,8 +10,8 @@ import android.view.View;
 import android.widget.Switch;
 
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.model.SettingsInfo;
 import com.deange.githubstatus.push.PushServerRegistrar;
-import com.deange.githubstatus.ui.SettingsInfo;
 
 public class SettingsFragment extends DialogFragment {
 
