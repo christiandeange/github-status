@@ -131,7 +131,15 @@ public class Status {
 
     public static boolean shouldAlert(final Status oldStatus, final Status newStatus) {
 
-        if (newStatus.getLevel().isHigherThan(Level.GOOD)) {
+        if (oldStatus == null) {
+            // First request ever, no alert necessary
+            return false;
+
+        } else if (newStatus == null) {
+            // Prevent a NullPointerException, but this *really* shouldn't happen
+            return false;
+
+        } else if (newStatus.getLevel().isHigherThan(Level.GOOD)) {
             // Any time time the status changes and it is above GOOD,
             // we should be alerting the change.
             // Clients may block it if the user decides to.

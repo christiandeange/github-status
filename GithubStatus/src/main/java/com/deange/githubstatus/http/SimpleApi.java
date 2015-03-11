@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.deange.githubstatus.Utils;
-import com.deange.githubstatus.GsonController;
+import com.deange.githubstatus.controller.GsonController;
 
 import java.io.IOException;
 import java.io.InputStream;

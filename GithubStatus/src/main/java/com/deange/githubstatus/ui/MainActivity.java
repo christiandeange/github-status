@@ -1,10 +1,8 @@
 package com.deange.githubstatus.ui;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +14,9 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.deange.githubstatus.PlatformUtils;
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.Utils;
 import com.deange.githubstatus.model.SettingsInfo;
 import com.deange.githubstatus.push.PushBaseActivity;
 import com.melnykov.fab.FloatingActionButton;
@@ -39,7 +39,7 @@ public class MainActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        if (isPortrait() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        if (Utils.showNiceView(this) && PlatformUtils.hasJellybean()) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
@@ -65,10 +65,6 @@ public class MainActivity
         }
     }
 
-    private boolean isPortrait() {
-        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-    }
-
 //    @Override
 //    protected void onDestroy() {
 //        if (mDialog != null && mDialog.isShowing()) {
@@ -81,9 +77,13 @@ public class MainActivity
 
     private void showInfoDialog() {
 
-        final String developerName = getString(R.string.about_developer_name, Calendar.getInstance().get(Calendar.YEAR));
+        final String developerName = getString(
+                R.string.about_developer_name,
+                Calendar.getInstance().get(Calendar.YEAR));
+
         final View dialogContentView = getLayoutInflater().inflate(R.layout.dialog_about, null);
-        ((TextView) dialogContentView.findViewById(R.id.dialog_about_developer_name)).setText(developerName);
+        ((TextView) dialogContentView.findViewById(R.id.dialog_about_developer_name))
+                .setText(developerName);
         dialogContentView.findViewById(R.id.dialog_about_avatar).setOnClickListener(this);
 
         mDialog = new AlertDialog.Builder(this)

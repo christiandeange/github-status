@@ -25,11 +25,15 @@ public final class PushUtils {
     public static final String TAG = PushUtils.class.getSimpleName();
     static final String ACTION_GCM_MESSAGE_RECEIVED = Utils.buildAction("GCM_MESSAGE_RECEIVED");
 
-    public static void listenForGcmMessages(final Context context, final PushMessageReceiver receiver) {
+    public static void listenForGcmMessages(
+            final Context context,
+            final PushMessageReceiver receiver) {
         context.registerReceiver(receiver, new IntentFilter(receiver.getAction()));
     }
 
-    public static void unregisterForGcmMessages(final Context context, final PushMessageReceiver receiver) {
+    public static void unregisterForGcmMessages(
+            final Context context,
+            final PushMessageReceiver receiver) {
         context.unregisterReceiver(receiver);
     }
 }

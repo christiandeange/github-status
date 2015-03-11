@@ -22,11 +22,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
+import com.deange.githubstatus.ui.TrackedActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public abstract class PushBaseActivity
-        extends ActionBarActivity
+        extends TrackedActivity
         implements OnPushMessageReceivedListener {
 
     private static final String TAG = PushBaseActivity.class.getSimpleName();

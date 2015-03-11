@@ -2,6 +2,7 @@ package com.deange.githubstatus;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,6 +61,9 @@ public final class Utils {
         return sb.toString();
     }
 
+    public static boolean showNiceView(final Context context) {
+        return context.getResources().getBoolean(R.bool.nice_view);
+    }
 
     public static String getVersionName() {
         return BuildConfig.VERSION_NAME;

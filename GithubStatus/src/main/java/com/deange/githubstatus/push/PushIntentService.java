@@ -7,6 +7,13 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.deange.githubstatus.Utils;
+import com.deange.githubstatus.controller.NotificationController;
+import com.deange.githubstatus.controller.StateController;
+import com.deange.githubstatus.http.GithubApi;
+import com.deange.githubstatus.model.Status;
+import com.deange.githubstatus.ui.TrackedActivity;
+
+import java.io.IOException;
 
 public class PushIntentService extends IntentService {
 
@@ -103,6 +110,32 @@ public class PushIntentService extends IntentService {
 
     public void onMessage(final Context context, final Intent intent, final String type) {
 
+        final Status newStatus;
+        try {
+            newStatus = GithubApi.getStatus(context);
+
+        } catch (final IOException e) {
+            // Cannot retrieve new status information
+            return;
+        }
+
+        final Status oldStatus = StateController.getInstance().getStatus();
+        final boolean alert = Status.shouldAlert(oldStatus, newStatus);
+
+        // Save the new status
+        StateController.getInstance().setStatus(newStatus);
+
+        if (alert) {
+            if (TrackedActivity.getVisibleActivities() == 0) {
+                // Pop a notification that the status has now changed!
+                NotificationController.getInstance().notificationForStatus(newStatus);
+            }
+        }
+
+        // Let other active listeners know that we received a message
+        final Intent broadcast = new Intent();
+        broadcast.setAction(PushUtils.ACTION_GCM_MESSAGE_RECEIVED);
+        context.sendBroadcast(broadcast);
     }
 
     public void onError(final Context context, final String error) {

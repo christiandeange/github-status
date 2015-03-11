@@ -2,14 +2,14 @@ package com.deange.githubstatus.model;
 
 public class SettingsInfo {
 
-    private final boolean gcmEnabled;
+    private final boolean mGcmEnabled;
 
     private SettingsInfo(final Builder builder) {
-        this.gcmEnabled = builder.gcmEnabled;
+        mGcmEnabled = builder.gcmEnabled;
     }
 
     public boolean isGCMEnabled() {
-        return gcmEnabled;
+        return mGcmEnabled;
     }
 
     public static final class Builder {

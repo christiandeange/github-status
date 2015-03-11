@@ -1,5 +1,10 @@
 package com.deange.githubstatus.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -16,8 +21,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.deange.githubstatus.GsonController;
 import com.deange.githubstatus.R;
+import com.deange.githubstatus.Utils;
+import com.deange.githubstatus.controller.GsonController;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;
 import com.deange.githubstatus.model.Status;
@@ -29,7 +35,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainFragment
         extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener, ViewSwitcher.ViewFactory {
+        implements
+        SwipeRefreshLayout.OnRefreshListener,
+        AbsListView.OnScrollListener,
+        ViewSwitcher.ViewFactory {
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
@@ -53,7 +62,8 @@ public class MainFragment
     private final AtomicInteger mComponentsLoaded = new AtomicInteger();
     private final Handler mHandler = new Handler();
     private long mLastUpdate = 0;
-
+    private ValueAnimator mAnimator;
+    private int mColour;
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -80,7 +90,10 @@ public class MainFragment
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+    public View onCreateView(
+            final LayoutInflater inflater,
+            final ViewGroup container,
+            final Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView()");
 
         mView = inflater.inflate(R.layout.fragment_main, null);
@@ -120,8 +133,11 @@ public class MainFragment
             mStatusView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
                 public void onLayoutChange(
-                        final View v, final int left, final int top, final int right, final int bottom,
-                        final int oldLeft, final int oldTop, final int oldRight, final int oldBottom) {
+                        final View v,
+                        final int left, final int top,
+                        final int right, final int bottom,
+                        final int oldLeft, final int oldTop,
+                        final int oldRight, final int oldBottom) {
 
                     mStatusView.setPivotX(0);
                     mStatusView.setPivotY(mStatusView.getMeasuredHeight());
@@ -140,7 +156,10 @@ public class MainFragment
         final boolean shouldRefresh = (mStatus == null || mMessages == null);
 
         // Refresh status view
-        mStatus = (mStatus == null) ? Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING) : mStatus;
+        mStatus = (mStatus == null)
+                ? Status.getSpecialStatus(getActivity(), Status.SpecialType.LOADING)
+                : mStatus;
+
         setStatus(mStatus);
 
         // Refresh messages view
@@ -202,7 +221,9 @@ public class MainFragment
 
                 mComponentsLoaded.incrementAndGet();
 
-                final Status status = (exception == null) ? entity : Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR);
+                final Status status = (exception == null)
+                        ? entity
+                        : Status.getSpecialStatus(getActivity(), Status.SpecialType.ERROR);
                 setStatus(status);
             }
         });
@@ -216,7 +237,9 @@ public class MainFragment
 
                 mComponentsLoaded.incrementAndGet();
 
-                final List<Status> statuses = (exception == null) ? entity : new ArrayList<Status>();
+                final List<Status> statuses = (exception == null)
+                        ? entity
+                        : new ArrayList<Status>();
                 setMessages(statuses);
             }
         });
@@ -251,7 +274,11 @@ public class MainFragment
     }
 
     @Override
-    public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+    public void onScroll(
+            final AbsListView view,
+            final int firstVisibleItem,
+            final int visibleItemCount,
+            final int totalItemCount) {
 
         if (view == mListView) {
             int topRowVerticalPosition = (mListView == null || mListView.getChildCount() == 0)
@@ -284,15 +311,40 @@ public class MainFragment
         return view;
     }
 
-    private boolean isPortrait() {
-        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+    private void animateColorFilter() {
+        final int startColour = mColour;
+        final int endColour = ViewUtils.resolveStatusColour(getActivity(), mStatus);
+        final Drawable background = mView.getBackground();
+
+        if (mAnimator != null) {
+            mAnimator.cancel();
+        }
+
+        mAnimator = ObjectAnimator.ofInt(startColour, endColour);
+        mAnimator.setEvaluator(new ArgbEvaluator());
+        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(final ValueAnimator animation) {
+                mColour = (Integer) animation.getAnimatedValue();
+                background.setColorFilter(mColour, PorterDuff.Mode.SRC_ATOP);
+            }
+        });
+
+        mAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(final Animator animation) {
+                mAnimator = null;
+            }
+        });
+
+        mAnimator.setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
+        mAnimator.start();
     }
 
     private void updateStatusView(final TextView view) {
-        if (isPortrait()) {
-            mView.getBackground().setColorFilter(
-                    ViewUtils.resolveStatusColour(getActivity(), mStatus),
-                    PorterDuff.Mode.SRC_ATOP);
+        if (Utils.showNiceView(getActivity())) {
+            animateColorFilter();
+
         } else {
             view.setTextColor(ViewUtils.resolveStatusColour(getActivity(), mStatus));
         }
