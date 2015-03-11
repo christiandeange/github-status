@@ -5,7 +5,7 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
     </style>
 
 </resources>

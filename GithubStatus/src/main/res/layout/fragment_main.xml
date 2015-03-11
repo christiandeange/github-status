@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:gs="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:animateLayoutChanges="true" >
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:gs="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_tile"
+        android:animateLayoutChanges="true">
 
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/fragment_swipe_container"
@@ -14,65 +16,78 @@
         <RelativeLayout
                 android:id="@+id/fragment_main_content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:layout_height="match_parent">
 
             <ViewSwitcher
                     android:id="@+id/fragment_status_text_flipper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
                     android:inAnimation="@android:anim/slide_in_left"
                     android:outAnimation="@android:anim/slide_out_right"/>
 
-            <TextView
-                    android:id="@+id/response_label_header"
+            <com.deange.githubstatus.ui.view.SliceView
+                    android:id="@+id/fragment_slice_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="4dp"
                     android:layout_below="@id/fragment_status_text_flipper"
-                    android:text="@string/loading_previous_messages"
-                    android:textAllCaps="true"
-                    android:textColor="@color/fragment_messages_header"
-                    android:textStyle="bold"/>
+                    android:background="@color/fragment_background"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:elevation="16dp"
+                    gs:sliceOffset="0dp"
+                    gs:sliceHeight="100dp">
 
-            <View
-                    android:id="@+id/response_label_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_below="@id/response_label_header"
-                    android:background="@color/fragment_messages_header"/>
+                <com.deange.githubstatus.ui.view.AutoScaleTextView
+                        android:id="@+id/response_label_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="50dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="4dp"
+                        android:text="@string/loading_previous_messages"
+                        android:textAllCaps="true"
+                        android:textColor="@color/fragment_messages_header"
+                        android:textStyle="bold"
+                        gs:scaleFactor="40%p"/>
 
-            <com.deange.githubstatus.ui.view.FontTextView
-                    android:id="@+id/loading_messages_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/response_label_view"
-                    android:text="@string/loading_status"
-                    android:padding="10dp"
-                    gs:fontName="@string/roboto_light_italic"/>
+                <View
+                        android:id="@+id/response_label_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_below="@id/response_label_header"
+                        android:background="@color/fragment_messages_header"/>
 
-            <com.deange.githubstatus.ui.view.FontTextView
-                    android:id="@+id/no_messages_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/loading_messages_view"
-                    android:text="@string/no_messages_status"
-                    android:padding="10dp"
-                    android:visibility="gone"
-                    gs:fontName="@string/roboto_light_italic"/>
+                <com.deange.githubstatus.ui.view.FontTextView
+                        android:id="@+id/loading_messages_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/response_label_view"
+                        android:text="@string/loading_status"
+                        android:padding="10dp"
+                        gs:fontName="@string/roboto_light_italic"/>
 
-            <ListView
-                    android:id="@+id/fragment_messages_list_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_below="@id/no_messages_view"/>
+                <com.deange.githubstatus.ui.view.FontTextView
+                        android:id="@+id/no_messages_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/loading_messages_view"
+                        android:text="@string/no_messages_status"
+                        android:padding="10dp"
+                        android:visibility="gone"
+                        gs:fontName="@string/roboto_light_italic"/>
+
+                <ListView
+                        android:id="@+id/fragment_messages_list_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_below="@id/no_messages_view"/>
+
+            </com.deange.githubstatus.ui.view.SliceView>
 
         </RelativeLayout>
 

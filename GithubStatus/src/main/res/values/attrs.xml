@@ -13,4 +13,10 @@
         <attr name="fontName" format="string"/>
     </declare-styleable>
 
+    <attr name="sliceViewStyle" format="reference" />
+    <declare-styleable name="SliceView">
+        <attr name="sliceHeight" format="dimension" />
+        <attr name="sliceOffset" format="dimension" />
+    </declare-styleable>
+
 </resources>

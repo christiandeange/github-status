@@ -1,5 +1,8 @@
 package com.deange.githubstatus.ui;
 
+import android.content.res.Configuration;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -18,6 +21,7 @@ import com.deange.githubstatus.R;
 import com.deange.githubstatus.http.GithubApi;
 import com.deange.githubstatus.http.HttpTask;
 import com.deange.githubstatus.model.Status;
+import com.deange.githubstatus.ui.view.SliceView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,20 +37,23 @@ public class MainFragment
     private static final long MINIMUM_UPDATE_DURATION = 1000;
     private static final int TOTAL_COMPONENTS = 2;
 
+    private View mView;
     private SwipeRefreshLayout mSwipeLayout;
+    private SliceView mSliceView;
     private TextView mLoadingView;
     private TextView mNothingView;
     private ListView mListView;
-    private ViewSwitcher mStatusView;
 
+    private ViewSwitcher mStatusView;
     private Status mStatus;
+
     private List<Status> mMessages;
 
     private MessagesAdapter mAdapter;
-
     private final AtomicInteger mComponentsLoaded = new AtomicInteger();
     private final Handler mHandler = new Handler();
     private long mLastUpdate = 0;
+
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -76,37 +83,51 @@ public class MainFragment
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView()");
 
-        final ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_main, null);
+        mView = inflater.inflate(R.layout.fragment_main, null);
 
-        mStatusView = (ViewSwitcher) view.findViewById(R.id.fragment_status_text_flipper);
+        mStatusView = (ViewSwitcher) mView.findViewById(R.id.fragment_status_text_flipper);
         mStatusView.setFactory(this);
-        mLoadingView = (TextView) view.findViewById(R.id.loading_messages_view);
-        mNothingView = (TextView) view.findViewById(R.id.no_messages_view);
+        mLoadingView = (TextView) mView.findViewById(R.id.loading_messages_view);
+        mNothingView = (TextView) mView.findViewById(R.id.no_messages_view);
 
-        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_swipe_container);
+        mSwipeLayout = (SwipeRefreshLayout) mView.findViewById(R.id.fragment_swipe_container);
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(R.color.status_good);
 
-        mListView = (ListView) view.findViewById(R.id.fragment_messages_list_view);
+        mSliceView = (SliceView) mView.findViewById(R.id.fragment_slice_view);
+
+        mListView = (ListView) mView.findViewById(R.id.fragment_messages_list_view);
         mListView.setDivider(null);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);
 
         updateVisibility();
 
-        return view;
+        return mView;
     }
 
     @Override
-    public void onResume() {
-        Log.v(TAG, "onResume()");
-        super.onResume();
-    }
+    public void onViewCreated(final View view, final Bundle savedInstanceState) {
+        Log.v(TAG, "onViewCreated()");
+        super.onViewCreated(view, savedInstanceState);
 
-    @Override
-    public void onPause() {
-        Log.v(TAG, "onPause()");
-        super.onPause();
+        if (mSliceView != null) {
+            final double angle = Math.toDegrees(Math.atan2(
+                    mSliceView.getSliceHeight(),
+                    getResources().getDisplayMetrics().widthPixels));
+            mStatusView.setRotation((float) angle);
+
+            mStatusView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(
+                        final View v, final int left, final int top, final int right, final int bottom,
+                        final int oldLeft, final int oldTop, final int oldRight, final int oldBottom) {
+
+                    mStatusView.setPivotX(0);
+                    mStatusView.setPivotY(mStatusView.getMeasuredHeight());
+                }
+            });
+        }
     }
 
     @Override
@@ -131,6 +152,18 @@ public class MainFragment
             refresh();
         }
 
+    }
+
+    @Override
+    public void onResume() {
+        Log.v(TAG, "onResume()");
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        Log.v(TAG, "onPause()");
+        super.onPause();
     }
 
     @Override
@@ -251,8 +284,19 @@ public class MainFragment
         return view;
     }
 
+    private boolean isPortrait() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
     private void updateStatusView(final TextView view) {
-        view.setTextColor(ViewUtils.resolveStatusColour(getActivity(), mStatus));
+        if (isPortrait()) {
+            mView.getBackground().setColorFilter(
+                    ViewUtils.resolveStatusColour(getActivity(), mStatus),
+                    PorterDuff.Mode.SRC_ATOP);
+        } else {
+            view.setTextColor(ViewUtils.resolveStatusColour(getActivity(), mStatus));
+        }
+
         view.setText(Status.getTranslatedStatus(getActivity(), mStatus).toUpperCase());
     }
 }

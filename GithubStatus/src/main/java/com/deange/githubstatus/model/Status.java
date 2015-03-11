@@ -69,6 +69,9 @@ public class Status {
         return specialStatus;
     }
 
+    public Status() {
+    }
+
     public boolean isSpecialStatus() {
         return mSpecial;
     }
@@ -138,10 +141,6 @@ public class Status {
             // Alert on a status level change
             return oldStatus.getLevel() != newStatus.getLevel();
         }
-    }
-
-    private Status() {
-        // Uninstantiable
     }
 
     @Override

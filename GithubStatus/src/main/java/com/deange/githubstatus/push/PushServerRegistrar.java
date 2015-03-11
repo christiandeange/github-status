@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.deange.githubstatus.BuildConfig;
 import com.deange.githubstatus.Utils;
 import com.deange.githubstatus.http.HttpIOException;
 
@@ -48,7 +49,7 @@ public final class PushServerRegistrar {
     private static final String PROPERTY_ON_SERVER_EXPIRATION_TIME = "onServerExpirationTime";
 
     private static final String RELEASE_SERVER_URL = "http://githubstatus.appspot.com";
-    private static final String SERVER_URL = RELEASE_SERVER_URL; // BuildConfig.SERVER_URL;
+    private static final String SERVER_URL = BuildConfig.SERVER_URL;
     private static final int MAX_ATTEMPTS = 5;
 
     static void register(final Context context, final String regId) {

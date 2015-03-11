@@ -9,5 +9,6 @@
     <color name="primary_dark">@color/status_good</color>
 
     <color name="fragment_messages_header">#FF123456</color>
+    <color name="fragment_background">#FFEEEEEE</color>
 
 </resources>

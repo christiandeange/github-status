@@ -1,33 +1,48 @@
 package com.deange.githubstatus.ui;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.deange.githubstatus.R;
 import com.deange.githubstatus.model.SettingsInfo;
 import com.deange.githubstatus.push.PushBaseActivity;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.Calendar;
 
 public class MainActivity
         extends PushBaseActivity
-        implements View.OnClickListener, SettingsFragment.OnSettingsChangedListener {
+        implements
+        View.OnClickListener,
+        SettingsFragment.OnSettingsChangedListener,
+        PopupMenu.OnMenuItemClickListener {
 
     private MainFragment mFragment;
     private AlertDialog mDialog;
 
     private static final String AVATAR_URL = "https://plus.google.com/+ChristianDeAngelis";
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (isPortrait() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -43,6 +58,15 @@ public class MainActivity
             getSupportFragmentManager().beginTransaction().add(
                     R.id.content_frame, mFragment, MainFragment.TAG).commit();
         }
+
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.content_fab);
+        if (fab != null) {
+            fab.setOnClickListener(this);
+        }
+    }
+
+    private boolean isPortrait() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
 //    @Override
@@ -65,6 +89,13 @@ public class MainActivity
         mDialog = new AlertDialog.Builder(this)
                 .setView(dialogContentView)
                 .show();
+    }
+
+    private void showOverflowMenu(final FloatingActionButton view) {
+        final PopupMenu menu = new PopupMenu(this, view);
+        menu.setOnMenuItemClickListener(this);
+        menu.inflate(R.menu.activity_menu);
+        menu.show();
     }
 
     private void showSettings() {
@@ -108,6 +139,12 @@ public class MainActivity
         }
     }
 
+    @Override
+    public boolean onMenuItemClick(final MenuItem item) {
+        // This is from the PopupMenu
+        return onOptionsItemSelected(item);
+    }
+
     private void refresh() {
         if (mFragment != null) {
             mFragment.refresh();
@@ -124,6 +161,10 @@ public class MainActivity
     public void onClick(final View v) {
 
         switch (v.getId()) {
+            case R.id.content_fab:
+                showOverflowMenu((FloatingActionButton) v);
+                break;
+
             case R.id.dialog_about_avatar:
                 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(AVATAR_URL)));
                 break;
