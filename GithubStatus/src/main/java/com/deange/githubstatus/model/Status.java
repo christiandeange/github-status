@@ -18,14 +18,14 @@ public class Status {
     public static final String BODY = "body";
     public static final String CREATED_ON = "created_on";
 
-    private static final Map<String, Integer> mStatusMap;
+    private static final Map<String, Integer> STATUS_MAP;
     static {
         final Map<String, Integer> map = new HashMap<>();
         map.put(GithubApi.STATUS_UNAVAILABLE, R.string.error_server_unavailable_status);
         map.put(GithubApi.STATUS_GOOD, R.string.status_good);
         map.put(GithubApi.STATUS_MINOR, R.string.status_minor);
         map.put(GithubApi.STATUS_MAJOR, R.string.status_major);
-        mStatusMap = Collections.unmodifiableMap(map);
+        STATUS_MAP = Collections.unmodifiableMap(map);
     }
 
     public enum SpecialType {
@@ -94,12 +94,12 @@ public class Status {
 
         if (status != null && status.getStatus() != null) {
             final String key = status.getStatus().toLowerCase();
-            if (!mStatusMap.containsKey(key)) {
+            if (!STATUS_MAP.containsKey(key)) {
                 // Fallback to default string
                 translatedStatus = key;
 
             } else {
-                final Integer statusResId = mStatusMap.get(key);
+                final Integer statusResId = STATUS_MAP.get(key);
                 translatedStatus = context.getString(statusResId);
             }
 

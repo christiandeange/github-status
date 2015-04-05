@@ -2,6 +2,7 @@ package com.deange.githubstatus.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.View;
 
 import com.deange.githubstatus.R;
@@ -13,7 +14,7 @@ public final class ViewUtils {
     public static int resolveStatusColour(final Context context, final Status status) {
 
         if (context == null) {
-            return 0xFF000000;
+            return Color.BLACK;
         }
 
         if (status == null || status.getStatus() == null) {

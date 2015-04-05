@@ -42,7 +42,7 @@ public class MainFragment
 
     public static final String TAG = MainFragment.class.getSimpleName();
 
-    private static final String KEY_STATUS = ".status";
+    private static final String KEY_STATUS = TAG + ".status";
     private static final long MINIMUM_UPDATE_DURATION = 1000;
     private static final int TOTAL_COMPONENTS = 2;
 

@@ -31,7 +31,6 @@ public class MainActivity
         PopupMenu.OnMenuItemClickListener {
 
     private MainFragment mFragment;
-    private AlertDialog mDialog;
 
     private static final String AVATAR_URL = "https://plus.google.com/+ChristianDeAngelis";
 
@@ -65,16 +64,6 @@ public class MainActivity
         }
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        if (mDialog != null && mDialog.isShowing()) {
-//            mDialog.cancel();
-//            mDialog = null;
-//        }
-//
-//        super.onDestroy();
-//    }
-
     private void showInfoDialog() {
 
         final String developerName = getString(
@@ -86,7 +75,7 @@ public class MainActivity
                 .setText(developerName);
         dialogContentView.findViewById(R.id.dialog_about_avatar).setOnClickListener(this);
 
-        mDialog = new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setView(dialogContentView)
                 .show();
     }
@@ -99,6 +88,11 @@ public class MainActivity
     }
 
     private void showSettings() {
+
+        if (!checkPlayServices()) {
+            return;
+        }
+
         final String tag = SettingsFragment.TAG;
         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         SettingsFragment fragment =

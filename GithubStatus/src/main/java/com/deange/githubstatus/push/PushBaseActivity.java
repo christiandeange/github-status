@@ -43,15 +43,6 @@ public abstract class PushBaseActivity
         PushUtils.listenForGcmMessages(this, mHandleGcmMessageReceiver);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mNeedToCheckPlayServices) {
-            checkPlayServices();
-        }
-    }
-
     protected void registerIfNecessary() {
         final String regId = PushRegistrar.getRegistrationId(this);
         if (!PushRegistrar.isRegistered(this)) {
@@ -74,6 +65,10 @@ public abstract class PushBaseActivity
     }
 
     protected boolean checkPlayServices() {
+        return !mNeedToCheckPlayServices || performPlayServicesCheck();
+    }
+
+    private boolean performPlayServicesCheck() {
 
         mNeedToCheckPlayServices = false;
         final int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);

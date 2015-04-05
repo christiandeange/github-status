@@ -57,7 +57,7 @@ public class SettingsFragment extends DialogFragment {
     }
 
     public interface OnSettingsChangedListener {
-        public void onSettingsChanged(final SettingsInfo settings);
+        void onSettingsChanged(final SettingsInfo settings);
     }
 
 }

@@ -14,8 +14,8 @@ public class HttpTask {
     }
 
     public interface OnHttpRequestDoneListener<T> {
-        public void onGet(final T entity, final Exception exception);
+        void onGet(final T entity, final Exception exception);
 
-        public void onPost(final T entity, final Exception exception);
+        void onPost(final T entity, final Exception exception);
     }
 }
