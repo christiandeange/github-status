@@ -1,5 +1,11 @@
-github-status
-=============
+DEPRECATED
+==========
+
+**GitHub Status is now Hubbub! Check it out – https://github.com/cdeange/hubbub**
+
+&nbsp;
+
+# github-status
 
 Simple app to connect to the GitHub Status API. [Download the app!][1]
 
@@ -21,12 +27,12 @@ If you're planning on checking out the repo, please respect the file structure a
 
 ---
 ### Developed By
-- Christian De Angelis - <christiandeange@gmail.com>
+- Christian De Angelis - <me@christian.sh>
 
 ---
 ### License
 ```
-Copyright 2014 Christian De Angelis
+Copyright 2018 Christian De Angelis
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
